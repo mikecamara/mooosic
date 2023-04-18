@@ -1,13 +1,13 @@
 # TODO
 
-0. Create App in Play store and Apple App store to reserve the app name.
+0. Create App in Play store and Apple App store to reserve the app name. ✅
 
-1. Set up the project environment (0.5 day, 3 points)
+1. Set up the project environment (0.5 day, 3 points) ✅
 
-* Install prerequisites (0.5 hour)
-* Initialize a new React Native project using Expo (0.5 hour)
-* Set up version control (Git) and create the initial repository (0.5 hour)
-* Plan the project structure and organize files (1 hour)
+* Install prerequisites (0.5 hour) ✅
+* Initialize a new React Native project using Expo (0.5 hour) ✅
+* Set up version control (Git) and create the initial repository (0.5 hour) ✅
+* Plan the project structure and organize files (1 hour) ✅
 
 2. Design the UI (1 day, 5 points)
 
