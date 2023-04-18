@@ -1,5 +1,7 @@
 # TODO
 
+0. Create App in Play store and Apple App store to reserve the app name.
+
 1. Set up the project environment (0.5 day, 3 points)
 
 * Install prerequisites (0.5 hour)
