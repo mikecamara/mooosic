@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import MediaPlayer from '../MediaPlayer.tsx';
+import MediaPlayer from './MediaPlayer.tsx';
 
 describe('MediaPlayer', () => {
   it('renders the MediaPlayer with the current song and play button', () => {
@@ -12,11 +12,13 @@ describe('MediaPlayer', () => {
     expect(getByText('▶')).toBeTruthy();
   });
 
-  it('calls the handlePlayPause when the play button is pressed', () => {
-    const handlePlayPause = jest.fn();
-    const { getByText } = render(<MediaPlayer onPlayPause={handlePlayPause} />);
+  it('changes the current song when the play button is pressed', () => {
+    const { getByText, rerender } = render(<MediaPlayer />);
 
     fireEvent.press(getByText('▶'));
-    expect(handlePlayPause).toHaveBeenCalledTimes(1);
+    rerender(<MediaPlayer />);
+
+    expect(getByText('Song 2')).toBeTruthy();
+    expect(getByText('Artist 2')).toBeTruthy();
   });
 });
