@@ -19,5 +19,4 @@ describe('SearchBar', () => {
     expect(getByDisplayValue('test')).toBeTruthy();
   });
 
-  // Remove this test since there's no "Clear" button in the provided SearchBar component
 });
