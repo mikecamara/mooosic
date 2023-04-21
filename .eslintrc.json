@@ -1,0 +1,57 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true,
+        "react-native/react-native": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "standard-with-typescript",
+        "airbnb",
+        "plugin:react-native/all",
+        "plugin:react-hooks/recommended"
+    ],
+    "settings": {
+        "react": {
+          "version": "detect"
+        }
+    },
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "react",
+        "react-native",
+        "react-hooks"
+    ],
+    "rules": {
+        "indent": ["error", 2, { "SwitchCase": 1 }],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
+        "no-console": "warn",
+        "no-debugger": "error",
+        "max-len": ["error", { "code": 80, "tabWidth": 2, "ignoreUrls": true }],
+        "no-trailing-spaces": "error",
+        "object-curly-spacing": ["error", "always"],
+        "comma-dangle": ["error", "never"],
+        "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
+        "camelcase": "error",
+        "eqeqeq": ["error", "always"],
+        "prefer-const": "error",
+        "no-var": "error",
+        "react/jsx-uses-vars": "error",
+        "react/jsx-uses-react": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
+      }
+}
