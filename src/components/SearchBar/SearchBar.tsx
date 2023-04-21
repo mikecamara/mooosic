@@ -4,39 +4,41 @@ import { TextInput, StyleSheet, View } from 'react-native';
 interface SearchBarProps {
   onSearch: (searchQuery: string) => void;
 }
+const GRAY_COLOR = '#999999';
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+  },
+  input: {
+    borderColor: GRAY_COLOR,
+    borderRadius: 4,
+    borderWidth: 1,
+    height: 40,
+    paddingLeft: 8,
+  },
+});
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+function SearchBar({ onSearch }: SearchBarProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSearch = (text: string) => {
+  function handleSearch(text: string): void {
     setSearchQuery(text);
     onSearch(text);
-  };
+  }
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        onChangeText={handleSearch}
+        onChangeText={(text: string) => {
+          handleSearch(text);
+        }}
         value={searchQuery}
         placeholder="Search for an artist"
         testID="search-input"
       />
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 8,
-    borderRadius: 4,
-  },
-});
+}
 
 export default SearchBar;

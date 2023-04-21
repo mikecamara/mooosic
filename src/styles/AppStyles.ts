@@ -1,21 +1,34 @@
 import { StyleSheet } from 'react-native';
 
-export const AppStyles = StyleSheet.create({
+const colors = {
+  white: '#fff',
+  darkGrey: '#5c5c5c',
+  red: '#ff0000',
+};
+
+const AppStyles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
+    backgroundColor: colors.white,
+    flex: 1,
     justifyContent: 'center',
   },
   header: {
-    paddingTop: 40,
+    backgroundColor: colors.darkGrey,
     paddingBottom: 20,
-    backgroundColor: '#5c5c5c',
+    paddingTop: 40,
+  },
+  text: {
+    color: colors.red,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   title: {
+    color: colors.white,
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#fff',
   },
 });
+
+export default AppStyles;

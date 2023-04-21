@@ -1,27 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import SearchBar from './components/SearchBar/SearchBar';
-import SongList from './components/SongList/SongList';
-import { AppStyles } from './styles/AppStyles';
+import { Text, View } from 'react-native';
+import SearchBar from './components/SearchBar/SearchBar.tsx';
+import SongList from './components/SongList/SongList.tsx';
+import AppStyles from './styles/AppStyles.ts';
+import type Song from './types/Song.ts';
 
+export default function App(): JSX.Element {
+  const [songs, setSongs] = useState<Song[]>([]);
 
-export default function App() {
-  const [songs, setSongs] = useState([]);
-
-  const handleSearch = (searchQuery: string) => {
+  const handleSearch = (searchQuery: string): void => {
     console.log('Search query:', searchQuery);
-    // Add your search logic here and update the `songs` state with the results
+    setSongs([
+      {
+        id: '1',
+        title: 'Song 1',
+        artist: 'Artist 1',
+      },
+    ]);
   };
 
-  const handleSongPress = (song: Song) => {
+  const handleSongPress = (song: Song): void => {
     console.log('Selected song:', song);
     // Add your song selection logic here
   };
 
   return (
     <View style={AppStyles.container}>
-      <StatusBar style="auto" />
+      <Text style={AppStyles.text}>Hello World</Text>
+
       <View style={AppStyles.header}>
         <Text style={AppStyles.title}>Mooosic</Text>
       </View>

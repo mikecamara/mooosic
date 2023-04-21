@@ -1,21 +1,22 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-
-interface Song {
-  id: string;
-  title: string;
-  artist: string;
-}
+import type Song from '../../types/Song.ts';
 
 interface SongListProps {
   songs: Song[];
   onSongPress: (song: Song) => void;
 }
 
-const SongList: React.FC<SongListProps> = ({ songs, onSongPress }) => {
-  const renderItem = ({ item }: { item: Song }) => (
-    <TouchableOpacity onPress={() => onSongPress(item)}>
-      <Text>{item.title} - {item.artist}</Text>
+function SongList({ songs, onSongPress }: SongListProps): JSX.Element {
+  const renderItem = ({ item }: { item: Song }): JSX.Element => (
+    <TouchableOpacity
+      onPress={() => {
+        onSongPress(item);
+      }}
+    >
+      <Text>
+        {item.title} - {item.artist}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -24,10 +25,10 @@ const SongList: React.FC<SongListProps> = ({ songs, onSongPress }) => {
       <FlatList
         data={songs}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
-};
+}
 
 export default SongList;
