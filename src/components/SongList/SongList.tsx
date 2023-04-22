@@ -34,6 +34,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  noResults: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
+    textAlign: 'center',
+  },
+  speakerIcon: {
+    fontSize: 20,
+    marginLeft: 10,
+  },
 });
 
 interface SongListProps {
@@ -71,16 +81,23 @@ function SongList({
         <Text style={styles.listItemArtist}>{item.artist}</Text>
         <Text style={styles.listItemAlbum}>{item.album}</Text>
       </View>
+      {currentSong !== null && currentSong.id === item.id && (
+        <Text style={styles.speakerIcon}>🔊</Text>
+      )}
     </TouchableOpacity>
   );
 
   return (
     <View>
-      <FlatList
-        data={songs}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+      {songs.length === 0 ? (
+        <Text style={styles.noResults}>No results found.</Text>
+      ) : (
+        <FlatList
+          data={songs}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
     </View>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextInput, StyleSheet, View } from 'react-native';
 
 interface SearchBarProps {
-  onSearch: (searchQuery: string) => void;
+  onSearch: (searchQuery: string) => Promise<void>;
 }
 const GRAY_COLOR = '#999999';
 const styles = StyleSheet.create({
@@ -21,17 +21,17 @@ const styles = StyleSheet.create({
 function SearchBar({ onSearch }: SearchBarProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
 
-  function handleSearch(text: string): void {
+  const handleTextChange = (text: string): void => {
     setSearchQuery(text);
-    onSearch(text);
-  }
+    void onSearch(text);
+  };
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
         onChangeText={(text: string) => {
-          handleSearch(text);
+          handleTextChange(text);
         }}
         value={searchQuery}
         placeholder="Search for an artist"

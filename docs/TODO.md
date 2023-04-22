@@ -20,13 +20,13 @@
 - Create the search bar component (0.5 day) ✅
 - Develop the song list component (0.5 day) ✅
 - Design the media player component (play/pause button) (0.5 day) ✅
-- Integrate components and implement navigation (2 hours)
+- Integrate components and implement navigation (2 hours) ✅
 
-4. Connect to the iTunes Search API (1 day, 5 points)
+4. Connect to the iTunes Search API (1 day, 5 points) ✅
 
-- Research the iTunes Search API and understand its usage (2 hours)
-- Implement API calls for searching artists and retrieving song information (4 hours)
-- Handle API errors and edge cases (2 hours)
+- Research the iTunes Search API and understand its usage (2 hours) ✅
+- Implement API calls for searching artists and retrieving song information (4 hours) ✅
+- Handle API errors and edge cases (2 hours) ✅
 
 5. Implement app functionality (2 days, 13 points)
 
