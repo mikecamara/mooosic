@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     borderBottomColor: GRAY_COLOR,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    marginBottom: 10,
     padding: 10,
   },
   listItemAlbum: {
@@ -44,6 +43,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 20,
     textAlign: 'center',
+  },
+  selectedItem: {
+    backgroundColor: GRAY_COLOR,
   },
   speakerContainer: {
     borderBottomWidth: 0,
@@ -88,7 +90,12 @@ function SongList({
 
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
     <TouchableOpacity
-      style={styles.listItem}
+      style={[
+        styles.listItem,
+        currentSong !== null &&
+          currentSong.id === item.id &&
+          styles.selectedItem,
+      ]}
       onPress={() => {
         handleSongPress(item);
       }}
