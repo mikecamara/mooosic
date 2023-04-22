@@ -29,6 +29,7 @@ async function fetchDefaultSongs(): Promise<Song[]> {
 export default function App(): JSX.Element {
   const [songs, setSongs] = useState<Song[]>([]);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   useEffect(() => {
     const loadDefaultSongs = async (): Promise<void> => {
@@ -73,7 +74,12 @@ export default function App(): JSX.Element {
 
   const handleSongPress = (song: Song): void => {
     console.log('Selected song:', song);
-    setCurrentSong(song);
+    if (currentSong !== null && currentSong.id === song.id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      setCurrentSong(song);
+      setIsPlaying(true);
+    }
   };
 
   return (
@@ -85,10 +91,14 @@ export default function App(): JSX.Element {
           onSongPress={handleSongPress}
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
         />
         <MediaPlayer
           currentSong={currentSong}
           setCurrentSong={setCurrentSong}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
         />
       </View>
     </View>

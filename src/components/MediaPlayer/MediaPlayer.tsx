@@ -48,19 +48,21 @@ const styles = StyleSheet.create({
 
 interface MediaPlayerProps {
   currentSong: Song | null;
-  setCurrentSong: (song: Song | null) => void;
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
 }
 
 function MediaPlayer({
   currentSong,
-  setCurrentSong,
+  isPlaying,
+  setIsPlaying,
 }: MediaPlayerProps): JSX.Element | null {
   if (currentSong === null) {
     return null;
   }
 
   const handlePlayPause = (): void => {
-    setCurrentSong(null);
+    setIsPlaying(!isPlaying);
   };
 
   return (
@@ -70,7 +72,7 @@ function MediaPlayer({
         <Text style={styles.artist}>{currentSong.artist}</Text>
       </View>
       <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-        <Text style={styles.playButtonText}>▶</Text>
+        <Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}</Text>
       </TouchableOpacity>
     </View>
   );

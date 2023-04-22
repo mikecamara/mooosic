@@ -51,6 +51,8 @@ interface SongListProps {
   onSongPress: (song: Song) => void;
   currentSong: Song | null;
   setCurrentSong: (song: Song | null) => void;
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
 }
 
 function SongList({
@@ -58,12 +60,20 @@ function SongList({
   onSongPress,
   currentSong,
   setCurrentSong,
+  isPlaying,
+  setIsPlaying,
 }: SongListProps): JSX.Element {
   const handleSongPress = (song: Song): void => {
     if (currentSong !== null && currentSong.id === song.id) {
-      setCurrentSong(null);
+      // If the song is already playing, do nothing
+      if (isPlaying) {
+        return;
+      }
+      // Otherwise, set the state to play the same song from the beginning
+      setIsPlaying(true);
     } else {
       setCurrentSong(song);
+      setIsPlaying(true);
     }
     onSongPress(song);
   };
@@ -82,7 +92,9 @@ function SongList({
         <Text style={styles.listItemAlbum}>{item.album}</Text>
       </View>
       {currentSong !== null && currentSong.id === item.id && (
-        <Text style={styles.speakerIcon}>🔊</Text>
+        <View style={styles.listItem}>
+          <Text style={styles.speakerIcon}>{isPlaying ? '🔊' : '🔇'}</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
