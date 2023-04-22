@@ -39,14 +39,30 @@ const styles = StyleSheet.create({
 interface SongListProps {
   songs: Song[];
   onSongPress: (song: Song) => void;
+  currentSong: Song | null;
+  setCurrentSong: (song: Song | null) => void;
 }
 
-function SongList({ songs, onSongPress }: SongListProps): JSX.Element {
+function SongList({
+  songs,
+  onSongPress,
+  currentSong,
+  setCurrentSong,
+}: SongListProps): JSX.Element {
+  const handleSongPress = (song: Song): void => {
+    if (currentSong !== null && currentSong.id === song.id) {
+      setCurrentSong(null);
+    } else {
+      setCurrentSong(song);
+    }
+    onSongPress(song);
+  };
+
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
     <TouchableOpacity
       style={styles.listItem}
       onPress={() => {
-        onSongPress(item);
+        handleSongPress(item);
       }}
     >
       <Image style={styles.image} source={{ uri: item.albumArt }} />

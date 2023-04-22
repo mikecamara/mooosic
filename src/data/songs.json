@@ -2,126 +2,201 @@
   {
     "id": "1",
     "title": "Bohemian Rhapsody",
-    "artist": "Queen"
+    "artist": "Queen",
+    "album": "A Night at the Opera",
+    "albumArt": "https://i.imgur.com/7k0zvns.jpg",
+    "playing": false
   },
   {
     "id": "2",
     "title": "Stairway to Heaven",
-    "artist": "Led Zeppelin"
+    "artist": "Led Zeppelin",
+    "album": "Led Zeppelin IV",
+    "albumArt": "https://i.imgur.com/Cyfzs5C.jpg",
+    "playing": false
   },
   {
     "id": "3",
     "title": "Imagine",
-    "artist": "John Lennon"
+    "artist": "John Lennon",
+    "album": "Imagine",
+    "albumArt": "https://i.imgur.com/j8AwGmK.jpg",
+    "playing": false
   },
   {
     "id": "4",
     "title": "What's Going On",
-    "artist": "Marvin Gaye"
+    "artist": "Marvin Gaye",
+    "album": "What's Going On",
+    "albumArt": "https://i.imgur.com/31PCx3i.jpg",
+    "playing": false
   },
   {
     "id": "5",
     "title": "Hotel California",
-    "artist": "Eagles"
+    "artist": "Eagles",
+    "album": "Hotel California",
+    "albumArt": "https://i.imgur.com/0y1v22x.jpg",
+    "playing": false
   },
   {
     "id": "6",
     "title": "Like a Rolling Stone",
-    "artist": "Bob Dylan"
+    "artist": "Bob Dylan",
+    "album": "Highway 61 Revisited",
+    "albumArt": "https://i.imgur.com/p9IcYU6.jpg",
+    "playing": false
   },
   {
     "id": "7",
     "title": "Superstition",
-    "artist": "Stevie Wonder"
+    "artist": "Stevie Wonder",
+    "album": "Talking Book",
+    "albumArt": "https://i.imgur.com/5Yn7wzK.jpg",
+    "playing": false
   },
   {
     "id": "8",
     "title": "Billie Jean",
-    "artist": "Michael Jackson"
+    "artist": "Michael Jackson",
+    "album": "Thriller",
+    "albumArt": "https://i.imgur.com/m1nsO4Y.jpg",
+    "playing": false
   },
   {
     "id": "9",
     "title": "Sweet Child O' Mine",
-    "artist": "Guns N' Roses"
+    "artist": "Guns N' Roses",
+    "album": "Appetite for Destruction",
+    "albumArt": "https://i.imgur.com/0l80DUT.jpg",
+    "playing": false
   },
   {
     "id": "10",
     "title": "Purple Haze",
-    "artist": "Jimi Hendrix"
+    "artist": "Jimi Hendrix",
+    "album": "Are You Experienced",
+    "albumArt": "https://i.imgur.com/6NudPO6.jpg",
+    "playing": false
   },
   {
     "id": "11",
     "title": "Smells Like Teen Spirit",
-    "artist": "Nirvana"
+    "artist": "Nirvana",
+    "album": "Nevermind",
+    "albumArt": "https://i.imgur.com/4pWMgRK.jpg",
+    "playing": false
   },
   {
     "id": "12",
     "title": "Wonderwall",
-    "artist": "Oasis"
+    "artist": "Oasis",
+    "album": "(What's the Story) Morning Glory?",
+    "albumArt": "https://i.imgur.com/Z00z6cG.jpg",
+    "playing": false
   },
   {
     "id": "13",
     "title": "Hey Jude",
-    "artist": "The Beatles"
+    "artist": "The Beatles",
+    "album": "The Beatles (The White Album)",
+    "albumArt": "https://i.imgur.com/8xTktZt.jpg",
+    "playing": false
   },
   {
     "id": "14",
     "title": "Piano Man",
-    "artist": "Billy Joel"
+    "artist": "Billy Joel",
+    "album": "Piano Man",
+    "albumArt": "https://i.imgur.com/4od4R0R.jpg",
+    "playing": false
   },
   {
     "id": "15",
     "title": "Let It Be",
-    "artist": "The Beatles"
+    "artist": "The Beatles",
+    "album": "Let It Be",
+    "albumArt": "https://i.imgur.com/8gWxh1Z.jpg",
+    "playing": false
   },
   {
     "id": "16",
     "title": "Sultans of Swing",
-    "artist": "Dire Straits"
+    "artist": "Dire Straits",
+    "album": "Dire Straits",
+    "albumArt": "https://i.imgur.com/8Q2KKQ0.jpg",
+    "playing": false
   },
   {
     "id": "17",
     "title": "No Woman, No Cry",
-    "artist": "Bob Marley"
+    "artist": "Bob Marley",
+    "album": "Natty Dread",
+    "albumArt": "https://i.imgur.com/Fja7vDg.jpg",
+    "playing": false
   },
   {
     "id": "18",
     "title": "Under Pressure",
-    "artist": "Queen & David Bowie"
+    "artist": "Queen & David Bowie",
+    "album": "Hot Space",
+    "albumArt": "https://i.imgur.com/boRfQZA.jpg",
+    "playing": false
   },
   {
     "id": "19",
     "title": "Another Brick in the Wall, Pt. 2",
-    "artist": "Pink Floyd"
+    "artist": "Pink Floyd",
+    "album": "The Wall",
+    "albumArt": "https://i.imgur.com/Ns4s5yH.jpg",
+    "playing": false
   },
   {
     "id": "20",
     "title": "Comfortably Numb",
-    "artist": "Pink Floyd"
+    "artist": "Pink Floyd",
+    "album": "The Wall",
+    "albumArt": "https://i.imgur.com/Ns4s5yH.jpg",
+    "playing": false
   },
   {
     "id": "21",
     "title": "Lose Yourself",
-    "artist": "Eminem"
+    "artist": "Eminem",
+    "album": "8 Mile Soundtrack",
+    "albumArt": "https://i.imgur.com/4BEg1pj.jpg",
+    "playing": false
   },
   {
     "id": "22",
     "title": "One",
-    "artist": "U2"
+    "artist": "U2",
+    "album": "Achtung Baby",
+    "albumArt": "https://i.imgur.com/C5q5W8n.jpg",
+    "playing": false
   },
   {
     "id": "23",
-    "title": "Shallow",
-    "artist": "Lady Gaga, Bradley Cooper"
+    "title": "Hey Ya!",
+    "artist": "OutKast",
+    "album": "Speakerboxxx/The Love Below",
+    "albumArt": "https://i.imgur.com/4YQZ2Zr.jpg",
+    "playing": false
   },
   {
     "id": "24",
-    "title": "Hallelujah",
-    "artist": "Leonard Cohen"
+    "title": "What's Up?",
+    "artist": "4 Non Blondes",
+    "album": "Bigger, Better, Faster, More!",
+    "albumArt": "https://i.imgur.com/4YQZ2Zr.jpg",
+    "playing": false
   },
   {
     "id": "25",
-    "title": "Despacito",
-    "artist": "Luis Fonsi ft. Daddy Yankee"
+    "title": "Shallow",
+    "artist": "Lady Gaga, Bradley Cooper",
+    "album": "A Star Is Born",
+    "albumArt": "https://i.imgur.com/4YQZ2Zr.jpg",
+    "playing": false
   }
 ]

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type Song from '../../types/Song.ts';
 
@@ -6,7 +6,6 @@ const ORANGE_COLOR = '#ff6600';
 const GRAY_COLOR = '#cccccc';
 const LIGHT_GRAY_COLOR = '#e5e5e5';
 const GREEN_COLOR = '#1DB954';
-
 const styles = StyleSheet.create({
   artist: {
     color: ORANGE_COLOR,
@@ -47,26 +46,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const sampleSongs: Song[] = [
-  {
-    id: '1',
-    title: 'Song 1',
-    artist: 'Artist 1',
-  },
-  {
-    id: '2',
-    title: 'Song 2',
-    artist: 'Artist 2',
-  },
-];
+interface MediaPlayerProps {
+  currentSong: Song | null;
+  setCurrentSong: (song: Song | null) => void;
+}
 
-function MediaPlayer(): JSX.Element {
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
-  const currentSong = sampleSongs[currentSongIndex];
+function MediaPlayer({
+  currentSong,
+  setCurrentSong,
+}: MediaPlayerProps): JSX.Element | null {
+  if (currentSong === null) {
+    return null;
+  }
 
   const handlePlayPause = (): void => {
-    // Add your play/pause logic here
-    setCurrentSongIndex((prevIndex) => (prevIndex + 1) % sampleSongs.length);
+    setCurrentSong(null);
   };
 
   return (
