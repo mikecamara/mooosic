@@ -30,9 +30,9 @@
 
 5. Implement app functionality (2 days, 13 points)
 
-- Enable search functionality and display results (0.5 day)
-- Implement song playback and media controls (0.5 day)
-- Handle edge cases and user interactions (e.g., selecting a song, playing/pausing) (1 day)
+- Enable search functionality and display results (0.5 day) ✅
+- Implement song playback and media controls (0.5 day) ✅
+- Handle edge cases and user interactions (e.g., selecting a song, playing/pausing) (1 day) ✅
 
 6. Write tests (1.5 days, 8 points)
 
