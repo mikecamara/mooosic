@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import type Song from '../../types/Song.ts';
 
+// add color #ccc'
+const GRAY_COLOR = '#e1e1e1';
+
 const styles = StyleSheet.create({
   image: {
     height: 50,
@@ -16,6 +19,8 @@ const styles = StyleSheet.create({
   },
   listItem: {
     alignItems: 'center',
+    borderBottomColor: GRAY_COLOR,
+    borderBottomWidth: 1,
     flexDirection: 'row',
     marginBottom: 10,
     padding: 10,
@@ -39,6 +44,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 20,
     textAlign: 'center',
+  },
+  speakerContainer: {
+    borderBottomWidth: 0,
   },
   speakerIcon: {
     fontSize: 20,
@@ -92,7 +100,7 @@ function SongList({
         <Text style={styles.listItemAlbum}>{item.album}</Text>
       </View>
       {currentSong !== null && currentSong.id === item.id && (
-        <View style={styles.listItem}>
+        <View style={[styles.listItem, styles.speakerContainer]}>
           <Text style={styles.speakerIcon}>{isPlaying ? '🔊' : '🔇'}</Text>
         </View>
       )}
