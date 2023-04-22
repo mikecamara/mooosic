@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import SearchBar from './components/SearchBar/SearchBar.tsx';
 import SongList from './components/SongList/SongList.tsx';
 import AppStyles from './styles/AppStyles.ts';
 import type Song from './types/Song.ts';
+import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
+import songsData from './data/songs.json';
 
 export default function App(): JSX.Element {
-  const [songs, setSongs] = useState<Song[]>([]);
+  const [songs, setSongs] = useState<Song[]>(songsData);
 
   const handleSearch = (searchQuery: string): void => {
     console.log('Search query:', searchQuery);
@@ -26,13 +28,11 @@ export default function App(): JSX.Element {
 
   return (
     <View style={AppStyles.container}>
-      <Text style={AppStyles.text}>Hello World</Text>
-
-      <View style={AppStyles.header}>
-        <Text style={AppStyles.title}>Mooosic</Text>
+      <View style={AppStyles.mainContent}>
+        <SearchBar onSearch={handleSearch} />
+        <SongList songs={songs} onSongPress={handleSongPress} />
+        <MediaPlayer />
       </View>
-      <SearchBar onSearch={handleSearch} />
-      <SongList songs={songs} onSongPress={handleSongPress} />
     </View>
   );
 }

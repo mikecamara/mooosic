@@ -1,0 +1,127 @@
+[
+  {
+    "id": "1",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen"
+  },
+  {
+    "id": "2",
+    "title": "Stairway to Heaven",
+    "artist": "Led Zeppelin"
+  },
+  {
+    "id": "3",
+    "title": "Imagine",
+    "artist": "John Lennon"
+  },
+  {
+    "id": "4",
+    "title": "What's Going On",
+    "artist": "Marvin Gaye"
+  },
+  {
+    "id": "5",
+    "title": "Hotel California",
+    "artist": "Eagles"
+  },
+  {
+    "id": "6",
+    "title": "Like a Rolling Stone",
+    "artist": "Bob Dylan"
+  },
+  {
+    "id": "7",
+    "title": "Superstition",
+    "artist": "Stevie Wonder"
+  },
+  {
+    "id": "8",
+    "title": "Billie Jean",
+    "artist": "Michael Jackson"
+  },
+  {
+    "id": "9",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses"
+  },
+  {
+    "id": "10",
+    "title": "Purple Haze",
+    "artist": "Jimi Hendrix"
+  },
+  {
+    "id": "11",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana"
+  },
+  {
+    "id": "12",
+    "title": "Wonderwall",
+    "artist": "Oasis"
+  },
+  {
+    "id": "13",
+    "title": "Hey Jude",
+    "artist": "The Beatles"
+  },
+  {
+    "id": "14",
+    "title": "Piano Man",
+    "artist": "Billy Joel"
+  },
+  {
+    "id": "15",
+    "title": "Let It Be",
+    "artist": "The Beatles"
+  },
+  {
+    "id": "16",
+    "title": "Sultans of Swing",
+    "artist": "Dire Straits"
+  },
+  {
+    "id": "17",
+    "title": "No Woman, No Cry",
+    "artist": "Bob Marley"
+  },
+  {
+    "id": "18",
+    "title": "Under Pressure",
+    "artist": "Queen & David Bowie"
+  },
+  {
+    "id": "19",
+    "title": "Another Brick in the Wall, Pt. 2",
+    "artist": "Pink Floyd"
+  },
+  {
+    "id": "20",
+    "title": "Comfortably Numb",
+    "artist": "Pink Floyd"
+  },
+  {
+    "id": "21",
+    "title": "Lose Yourself",
+    "artist": "Eminem"
+  },
+  {
+    "id": "22",
+    "title": "One",
+    "artist": "U2"
+  },
+  {
+    "id": "23",
+    "title": "Shallow",
+    "artist": "Lady Gaga, Bradley Cooper"
+  },
+  {
+    "id": "24",
+    "title": "Hallelujah",
+    "artist": "Leonard Cohen"
+  },
+  {
+    "id": "25",
+    "title": "Despacito",
+    "artist": "Luis Fonsi ft. Daddy Yankee"
+  }
+]

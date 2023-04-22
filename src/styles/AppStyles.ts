@@ -9,25 +9,20 @@ const colors = {
 const AppStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: colors.white,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  header: {
     backgroundColor: colors.darkGrey,
-    paddingBottom: 20,
-    paddingTop: 40,
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingTop: 50,
+  },
+  mainContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+    width: '100%',
   },
   text: {
     color: colors.red,
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  title: {
-    color: colors.white,
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
 
