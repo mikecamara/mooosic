@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Keyboard,
 } from 'react-native';
 import type Song from '../../types/Song.ts';
 
-// add color #ccc'
 const GRAY_COLOR = '#e1e1e1';
 
 const styles = StyleSheet.create({
@@ -74,12 +74,11 @@ function SongList({
   setIsPlaying,
 }: SongListProps): JSX.Element {
   const handleSongPress = (song: Song): void => {
+    Keyboard.dismiss();
     if (currentSong !== null && currentSong.id === song.id) {
-      // If the song is already playing, do nothing
       if (isPlaying) {
         return;
       }
-      // Otherwise, set the state to play the same song from the beginning
       setIsPlaying(true);
     } else {
       setCurrentSong(song);
@@ -123,6 +122,7 @@ function SongList({
           data={songs}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
+          keyboardShouldPersistTaps="always"
         />
       )}
     </View>
