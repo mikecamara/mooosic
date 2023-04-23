@@ -89,20 +89,28 @@ function SongList({
 
   const handleSongPress = (song: Song): void => {
     Keyboard.dismiss();
+    const playSong: () => Promise<void> = async () => {
+      setLoadingSongId(song.id);
+      setIsLoading(true);
+      onSongPress(song, () => {
+        setLoadingSongId(null);
+      });
+    };
     if (currentSong !== null && currentSong.id === song.id) {
-      if (isPlaying) {
-        return;
+      if (!isPlaying) {
+        setIsPlaying(true);
       }
-      setIsPlaying(true);
+      void playSong();
+      // Restart the song
+      setIsPlaying(false);
+      setTimeout(() => {
+        setIsPlaying(true);
+      }, 0);
     } else {
       setCurrentSong(song);
       setIsPlaying(true);
+      void playSong();
     }
-    setLoadingSongId(song.id);
-    setIsLoading(true);
-    onSongPress(song, () => {
-      setLoadingSongId(null);
-    });
   };
 
   const getSpeakerIcon = (): string => {

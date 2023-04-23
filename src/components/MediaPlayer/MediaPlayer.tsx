@@ -107,7 +107,9 @@ function MediaPlayer({
   setIsLoading,
 }: MediaPlayerProps): JSX.Element | null {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
-
+  const [soundObject, setSoundObject] = useState<Audio.SoundObject | null>(
+    null
+  );
   useEffect(() => {
     const handleAppStateChange = async (
       nextAppState: AppStateStatus
@@ -150,17 +152,29 @@ function MediaPlayer({
     console.log('Loading preview');
     if (url !== null && url !== '') {
       try {
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          { uri: url },
-          { shouldPlay: true },
-          (status) => {
-            if (status.isLoaded && status.isPlaying) {
-              onPreviewLoaded();
+        const { sound: newSound, status: newStatus } =
+          await Audio.Sound.createAsync(
+            { uri: url },
+            { shouldPlay: true },
+            (status) => {
+              void (async () => {
+                if (status.isLoaded && status.isPlaying) {
+                  onPreviewLoaded();
+                }
+
+                // Update this block to handle the end of the song playback
+                if (status.isLoaded && status.didJustFinish) {
+                  console.log('Playback has finished');
+                  setIsPlaying(false);
+                  await newSound.unloadAsync();
+                  setSoundObject(null);
+                }
+              })();
             }
-          }
-        );
+          );
         await newSound.playAsync();
         setSound(newSound);
+        setSoundObject({ sound: newSound, status: newStatus });
       } catch (error) {
         console.error('Error while playing audio:', error);
       }
@@ -175,13 +189,37 @@ function MediaPlayer({
       void loadAndPlayPreview(currentSong.previewUrl, () => {
         setIsLoading(false);
       });
-    } else {
-      void sound?.pauseAsync();
     }
-  }, [isPlaying, currentSong]);
+  }, [currentSong]);
 
   const handlePlayPause = (): void => {
-    setIsPlaying(!isPlaying);
+    console.log('handlePlayPause');
+    void (async () => {
+      if (soundObject !== null) {
+        console.log('soundObject is not null');
+        const currentStatus = await soundObject.sound.getStatusAsync();
+        if (currentStatus.isLoaded) {
+          console.log('status is loaded');
+          if (currentStatus.isPlaying) {
+            console.log('status is playing');
+            await soundObject.sound.pauseAsync();
+            setIsPlaying(false);
+          } else {
+            console.log('status is not playing');
+            await soundObject.sound.playAsync();
+            setIsPlaying(true);
+          }
+        }
+      } else {
+        console.log('soundObject is null');
+        if (currentSong !== null && !isPlaying) {
+          setIsPlaying(true);
+          void loadAndPlayPreview(currentSong.previewUrl, () => {
+            setIsLoading(false);
+          });
+        }
+      }
+    })();
   };
 
   if (currentSong === null) {
