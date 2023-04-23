@@ -5496,6 +5496,11 @@
     "path-browserify" "^1.0.0"
     "url-parse" "^1.5.9"
 
+"expo-av@~13.2.1":
+  "integrity" "sha512-mC0mYSzaOaZgXjzhW2l4Ag325JjH6q5IbptfwD7gkMOFYy7VPOMxEMUnetadbs3DDzmgE6vUWrTjUIUbwq59qg=="
+  "resolved" "https://registry.npmjs.org/expo-av/-/expo-av-13.2.1.tgz"
+  "version" "13.2.1"
+
 "expo-blur@~12.2.2":
   "integrity" "sha512-SvGbEZbB0VFNGqCW7FcqzWOEb3lrRgBnQKGrsKo49KwhMyHTYjYVYWnmrk9l8Tr7lIaNnd55QD6dPAzcXjZYMg=="
   "resolved" "https://registry.npmjs.org/expo-blur/-/expo-blur-12.2.2.tgz"

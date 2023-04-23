@@ -13,6 +13,14 @@ import type Song from '../../types/Song.ts';
 const GRAY_COLOR = '#e1e1e1';
 
 const styles = StyleSheet.create({
+  centered: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  container: {
+    flex: 1,
+  },
   image: {
     height: 50,
     width: 50,
@@ -41,7 +49,6 @@ const styles = StyleSheet.create({
   noResults: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20,
     textAlign: 'center',
   },
   selectedItem: {
@@ -114,9 +121,11 @@ function SongList({
   );
 
   return (
-    <View>
+    <View style={styles.container}>
       {songs.length === 0 ? (
-        <Text style={styles.noResults}>No results found.</Text>
+        <View style={styles.centered}>
+          <Text style={styles.noResults}>No results found.</Text>
+        </View>
       ) : (
         <FlatList
           data={songs}

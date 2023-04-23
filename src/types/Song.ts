@@ -1,3 +1,5 @@
+import { type ReactNode } from 'react';
+
 interface Song {
   album?: ReactNode;
   albumArt?: string | undefined;
@@ -5,6 +7,7 @@ interface Song {
   playing?: boolean;
   title: string;
   artist?: string;
+  previewUrl: string;
 }
 
 export default Song;

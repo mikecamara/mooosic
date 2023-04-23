@@ -7,8 +7,9 @@ import type Song from './types/Song.ts';
 import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
 
 async function fetchDefaultSongs(): Promise<Song[]> {
+  const defaultQuery = 'farm+songs+and+other+animal+songs';
   const response = await fetch(
-    'https://itunes.apple.com/us/rss/topsongs/limit=25/json'
+    `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25`
   );
 
   if (!response.ok) {
@@ -16,13 +17,14 @@ async function fetchDefaultSongs(): Promise<Song[]> {
   }
 
   const data = await response.json();
-  return data.feed.entry.map((entry: any) => ({
-    id: entry.id.attributes['im:id'],
-    title: entry['im:name'].label,
-    artist: entry['im:artist'].label,
-    album: '',
-    albumArt: entry['im:image'][2].label,
+  return data.results.map((result: any) => ({
+    id: result.trackId.toString(),
+    title: result.trackName,
+    artist: result.artistName,
+    album: result.collectionName,
+    albumArt: result.artworkUrl100,
     playing: false,
+    previewUrl: result.previewUrl,
   }));
 }
 
@@ -43,21 +45,17 @@ export default function App(): JSX.Element {
   }, []);
 
   const handleSearch = async (searchQuery: string): Promise<void> => {
-    console.log('Search query:', searchQuery);
-
     if (searchQuery.trim() === '') {
       const defaultSongs = await fetchDefaultSongs();
       setSongs(defaultSongs);
       return;
     }
-
     const response = await fetch(
       `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song`
     );
 
     if (response.ok) {
       const data = await response.json();
-      console.log('Fetched data:', data);
       const fetchedSongs = data.results.map((result: any) => ({
         id: result.trackId.toString(),
         title: result.trackName,
@@ -65,6 +63,7 @@ export default function App(): JSX.Element {
         album: result.collectionName,
         albumArt: result.artworkUrl100,
         playing: false,
+        previewUrl: result.previewUrl,
       }));
       setSongs(fetchedSongs);
     } else {
@@ -73,7 +72,6 @@ export default function App(): JSX.Element {
   };
 
   const handleSongPress = (song: Song): void => {
-    console.log('Selected song:', song);
     if (currentSong !== null && currentSong.id === song.id) {
       setIsPlaying(!isPlaying);
     } else {
@@ -96,7 +94,6 @@ export default function App(): JSX.Element {
         />
         <MediaPlayer
           currentSong={currentSong}
-          setCurrentSong={setCurrentSong}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
         />

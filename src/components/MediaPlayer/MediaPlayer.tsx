@@ -1,6 +1,9 @@
 import { BlurView } from 'expo-blur';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import {
+  AppState,
+  type AppStateStatus,
   View,
   Text,
   TouchableOpacity,
@@ -22,7 +25,7 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: -10, // Move the blurView up by 10 units
+    top: -10,
   },
   container: {
     alignItems: 'center',
@@ -30,7 +33,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     bottom: 0,
     flexDirection: 'row',
-    height: 70, // Increase the height to 70
+    height: 70,
     justifyContent: 'space-between',
     left: 0,
     paddingBottom: 30,
@@ -101,22 +104,86 @@ function MediaPlayer({
   isPlaying,
   setIsPlaying,
 }: MediaPlayerProps): JSX.Element | null {
-  if (currentSong === null) {
-    return null;
-  }
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    const handleAppStateChange = async (
+      nextAppState: AppStateStatus
+    ): Promise<void> => {
+      if (nextAppState === 'background' && sound !== null) {
+        const status = await sound.getStatusAsync();
+        if ('isPlaying' in status && status.isPlaying) {
+          setIsPlaying(false);
+        }
+      }
+    };
+
+    const setAudioMode = async (): Promise<void> => {
+      await Audio.setAudioModeAsync({
+        staysActiveInBackground: true,
+        interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+        shouldDuckAndroid: false,
+      });
+    };
+
+    void setAudioMode();
+
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      // eslint-disable-next-line no-void
+      (nextAppState: AppStateStatus) => void handleAppStateChange(nextAppState)
+    );
+
+    return () => {
+      appStateSubscription.remove();
+      void sound?.unloadAsync();
+    };
+  }, [sound]);
+
+  const loadAndPlayPreview = async (url: string): Promise<void> => {
+    console.log('Loading preview');
+    if (url !== null && url !== '') {
+      try {
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          { uri: url },
+          { shouldPlay: true }
+        );
+        await newSound.playAsync();
+        console.log(newSound);
+        console.log('Playing preview cool');
+        setSound(newSound);
+      } catch (error) {
+        console.error('Error while playing audio:', error);
+      }
+    } else {
+      console.log('Cannot load an AV asset from a null playback source.');
+      console.warn('Cannot load an AV asset from a null playback source.');
+    }
+  };
+
+  useEffect(() => {
+    if (isPlaying && currentSong !== null) {
+      console.log('Playing preview');
+      console.log(currentSong.previewUrl);
+      void loadAndPlayPreview(currentSong.previewUrl);
+    } else {
+      void sound?.pauseAsync();
+    }
+  }, [isPlaying, currentSong]);
 
   const handlePlayPause = (): void => {
     setIsPlaying(!isPlaying);
   };
 
+  if (currentSong === null) {
+    return null;
+  }
+
   return (
     <View style={styles.mediaPlayerWrapper}>
       <View style={styles.container}>
-        <BlurView
-          intensity={50}
-          style={styles.blurView}
-          tint="light" // Add this line
-        />
+        <BlurView intensity={50} style={styles.blurView} tint="light" />
         <View style={styles.content}>
           <View style={styles.songInfo}>
             <Text style={styles.title}>
