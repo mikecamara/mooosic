@@ -72,6 +72,7 @@ interface SongListProps {
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
   isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 function SongList({
@@ -82,6 +83,7 @@ function SongList({
   isPlaying,
   setIsPlaying,
   isLoading,
+  setIsLoading,
 }: SongListProps): JSX.Element {
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
 
@@ -97,6 +99,7 @@ function SongList({
       setIsPlaying(true);
     }
     setLoadingSongId(song.id);
+    setIsLoading(true);
     onSongPress(song, () => {
       setLoadingSongId(null);
     });

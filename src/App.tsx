@@ -79,9 +79,7 @@ export default function App(): JSX.Element {
     } else {
       setCurrentSong(song);
       setIsPlaying(true);
-      setTimeout(() => {
-        onLoadComplete();
-      }, 1000);
+      onLoadComplete();
     }
   };
 
@@ -97,6 +95,7 @@ export default function App(): JSX.Element {
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
         <MediaPlayer
           currentSong={currentSong}

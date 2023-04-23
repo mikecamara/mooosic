@@ -152,10 +152,14 @@ function MediaPlayer({
       try {
         const { sound: newSound } = await Audio.Sound.createAsync(
           { uri: url },
-          { shouldPlay: true }
+          { shouldPlay: true },
+          (status) => {
+            if (status.isLoaded && status.isPlaying) {
+              onPreviewLoaded();
+            }
+          }
         );
         await newSound.playAsync();
-        onPreviewLoaded();
         setSound(newSound);
       } catch (error) {
         console.error('Error while playing audio:', error);
