@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import type Song from '../../types/Song.ts';
 
@@ -65,11 +66,12 @@ const styles = StyleSheet.create({
 
 interface SongListProps {
   songs: Song[];
-  onSongPress: (song: Song) => void;
+  onSongPress: (song: Song, onLoadComplete: () => void) => void;
   currentSong: Song | null;
   setCurrentSong: (song: Song | null) => void;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
+  isLoading: boolean;
 }
 
 function SongList({
@@ -79,7 +81,10 @@ function SongList({
   setCurrentSong,
   isPlaying,
   setIsPlaying,
+  isLoading,
 }: SongListProps): JSX.Element {
+  const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
+
   const handleSongPress = (song: Song): void => {
     Keyboard.dismiss();
     if (currentSong !== null && currentSong.id === song.id) {
@@ -91,7 +96,20 @@ function SongList({
       setCurrentSong(song);
       setIsPlaying(true);
     }
-    onSongPress(song);
+    setLoadingSongId(song.id);
+    onSongPress(song, () => {
+      setLoadingSongId(null);
+    });
+  };
+
+  const getSpeakerIcon = (): string => {
+    if (isLoading) {
+      return '⏳';
+    }
+    if (isPlaying) {
+      return '🔊';
+    }
+    return '🔇';
   };
 
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
@@ -114,7 +132,11 @@ function SongList({
       </View>
       {currentSong !== null && currentSong.id === item.id && (
         <View style={[styles.listItem, styles.speakerContainer]}>
-          <Text style={styles.speakerIcon}>{isPlaying ? '🔊' : '🔇'}</Text>
+          {loadingSongId === item.id ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            <Text style={styles.speakerIcon}>{getSpeakerIcon()}</Text>
+          )}
         </View>
       )}
     </TouchableOpacity>

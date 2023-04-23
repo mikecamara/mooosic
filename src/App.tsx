@@ -32,6 +32,7 @@ export default function App(): JSX.Element {
   const [songs, setSongs] = useState<Song[]>([]);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const loadDefaultSongs = async (): Promise<void> => {
@@ -71,12 +72,16 @@ export default function App(): JSX.Element {
     }
   };
 
-  const handleSongPress = (song: Song): void => {
+  const handleSongPress = (song: Song, onLoadComplete: () => void): void => {
     if (currentSong !== null && currentSong.id === song.id) {
       setIsPlaying(!isPlaying);
+      onLoadComplete();
     } else {
       setCurrentSong(song);
       setIsPlaying(true);
+      setTimeout(() => {
+        onLoadComplete();
+      }, 1000);
     }
   };
 
@@ -91,11 +96,13 @@ export default function App(): JSX.Element {
           setCurrentSong={setCurrentSong}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
+          isLoading={isLoading}
         />
         <MediaPlayer
           currentSong={currentSong}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
+          setIsLoading={setIsLoading}
         />
       </View>
     </View>

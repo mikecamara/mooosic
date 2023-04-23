@@ -78,6 +78,7 @@ interface MediaPlayerProps {
   currentSong: Song | null;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 const truncateTitle = (title: string, maxLengthRatio = 0.09): string => {
@@ -103,6 +104,7 @@ function MediaPlayer({
   currentSong,
   isPlaying,
   setIsPlaying,
+  setIsLoading,
 }: MediaPlayerProps): JSX.Element | null {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
@@ -141,7 +143,10 @@ function MediaPlayer({
     };
   }, [sound]);
 
-  const loadAndPlayPreview = async (url: string): Promise<void> => {
+  const loadAndPlayPreview = async (
+    url: string,
+    onPreviewLoaded: () => void
+  ): Promise<void> => {
     console.log('Loading preview');
     if (url !== null && url !== '') {
       try {
@@ -150,8 +155,7 @@ function MediaPlayer({
           { shouldPlay: true }
         );
         await newSound.playAsync();
-        console.log(newSound);
-        console.log('Playing preview cool');
+        onPreviewLoaded();
         setSound(newSound);
       } catch (error) {
         console.error('Error while playing audio:', error);
@@ -164,9 +168,9 @@ function MediaPlayer({
 
   useEffect(() => {
     if (isPlaying && currentSong !== null) {
-      console.log('Playing preview');
-      console.log(currentSong.previewUrl);
-      void loadAndPlayPreview(currentSong.previewUrl);
+      void loadAndPlayPreview(currentSong.previewUrl, () => {
+        setIsLoading(false);
+      });
     } else {
       void sound?.pauseAsync();
     }
