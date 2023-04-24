@@ -7,109 +7,30 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
 } from 'react-native';
 import type Song from '../../types/Song.ts';
-
-const ORANGE_COLOR = '#ff6600';
-const GRAY_COLOR = '#cccccc';
-const LIGHT_GRAY_COLOR = '#e5e5e5';
-const GREEN_COLOR = '#1DB954';
-const styles = StyleSheet.create({
-  artist: {
-    color: ORANGE_COLOR,
-  },
-  blurView: {
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: -10,
-  },
-  container: {
-    alignItems: 'center',
-    borderColor: GRAY_COLOR,
-    borderTopWidth: 1,
-    bottom: 0,
-    flexDirection: 'row',
-    height: 70,
-    justifyContent: 'space-between',
-    left: 0,
-    paddingBottom: 30,
-    paddingHorizontal: 16,
-    position: 'absolute',
-    right: 0,
-  },
-  content: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  mediaPlayerWrapper: {
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-  },
-  playButton: {
-    alignItems: 'center',
-    backgroundColor: GREEN_COLOR,
-    borderRadius: 25,
-    height: 50,
-    justifyContent: 'center',
-    width: 50,
-  },
-  playButtonText: {
-    color: LIGHT_GRAY_COLOR,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  songInfo: {
-    flexDirection: 'column',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
-});
+import styles from './MediaPlayer.styles.ts';
+import { truncateTitle } from './MediaPlayer.utils.ts';
 
 interface MediaPlayerProps {
   currentSong: Song | null;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
+  setSoundObject: (soundObject: Audio.SoundObject | null) => void;
+  handlePlayPause: () => Promise<void>;
 }
-
-const truncateTitle = (title: string, maxLengthRatio = 0.09): string => {
-  const screenWidth = Dimensions.get('window').width;
-  const maxLength = Math.floor(screenWidth * maxLengthRatio);
-
-  if (title.length <= maxLength) {
-    return title;
-  }
-
-  let truncatedTitle = title.slice(0, maxLength);
-  while (
-    truncatedTitle.length > 0 &&
-    (truncatedTitle.endsWith(' ') || truncatedTitle.endsWith(','))
-  ) {
-    truncatedTitle = truncatedTitle.slice(0, -1);
-  }
-
-  return `${truncatedTitle}...`;
-};
 
 function MediaPlayer({
   currentSong,
   isPlaying,
   setIsPlaying,
   setIsLoading,
+  setSoundObject,
+  handlePlayPause,
 }: MediaPlayerProps): JSX.Element | null {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [soundObject, setSoundObject] = useState<Audio.SoundObject | null>(
-    null
-  );
+
   useEffect(() => {
     const handleAppStateChange = async (
       nextAppState: AppStateStatus
@@ -162,7 +83,6 @@ function MediaPlayer({
                   onPreviewLoaded();
                 }
 
-                // Update this block to handle the end of the song playback
                 if (status.isLoaded && status.didJustFinish) {
                   console.log('Playback has finished');
                   setIsPlaying(false);
@@ -191,36 +111,6 @@ function MediaPlayer({
       });
     }
   }, [currentSong]);
-
-  const handlePlayPause = (): void => {
-    console.log('handlePlayPause');
-    void (async () => {
-      if (soundObject !== null) {
-        console.log('soundObject is not null');
-        const currentStatus = await soundObject.sound.getStatusAsync();
-        if (currentStatus.isLoaded) {
-          console.log('status is loaded');
-          if (currentStatus.isPlaying) {
-            console.log('status is playing');
-            await soundObject.sound.pauseAsync();
-            setIsPlaying(false);
-          } else {
-            console.log('status is not playing');
-            await soundObject.sound.playAsync();
-            setIsPlaying(true);
-          }
-        }
-      } else {
-        console.log('soundObject is null');
-        if (currentSong !== null && !isPlaying) {
-          setIsPlaying(true);
-          void loadAndPlayPreview(currentSong.previewUrl, () => {
-            setIsLoading(false);
-          });
-        }
-      }
-    })();
-  };
 
   if (currentSong === null) {
     return null;
