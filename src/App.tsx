@@ -7,7 +7,7 @@ import type Song from './types/Song.ts';
 import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
 
 async function fetchDefaultSongs(page: number): Promise<Song[]> {
-  const defaultQuery = 'farm+songs+and+other+animal+songs';
+  const defaultQuery = 'red+hot';
   const response = await fetch(
     `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25&offset=${
       (page - 1) * 25
