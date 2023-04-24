@@ -7,104 +7,27 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
 } from 'react-native';
 import type Song from '../../types/Song.ts';
-
-const ORANGE_COLOR = '#ff6600';
-const GRAY_COLOR = '#cccccc';
-const LIGHT_GRAY_COLOR = '#e5e5e5';
-const GREEN_COLOR = '#1DB954';
-const styles = StyleSheet.create({
-  artist: {
-    color: ORANGE_COLOR,
-  },
-  blurView: {
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: -10,
-  },
-  container: {
-    alignItems: 'center',
-    borderColor: GRAY_COLOR,
-    borderTopWidth: 1,
-    bottom: 0,
-    flexDirection: 'row',
-    height: 70,
-    justifyContent: 'space-between',
-    left: 0,
-    paddingBottom: 30,
-    paddingHorizontal: 16,
-    position: 'absolute',
-    right: 0,
-  },
-  content: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  mediaPlayerWrapper: {
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-  },
-  playButton: {
-    alignItems: 'center',
-    backgroundColor: GREEN_COLOR,
-    borderRadius: 25,
-    height: 50,
-    justifyContent: 'center',
-    width: 50,
-  },
-  playButtonText: {
-    color: LIGHT_GRAY_COLOR,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  songInfo: {
-    flexDirection: 'column',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
-});
+import styles from './MediaPlayer.styles.ts';
+import { truncateTitle } from './MediaPlayer.utils.ts';
 
 interface MediaPlayerProps {
   currentSong: Song | null;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
+  setSoundObject: (soundObject: Audio.SoundObject | null) => void;
+  handlePlayPause: () => Promise<void>;
 }
-
-const truncateTitle = (title: string, maxLengthRatio = 0.09): string => {
-  const screenWidth = Dimensions.get('window').width;
-  const maxLength = Math.floor(screenWidth * maxLengthRatio);
-
-  if (title.length <= maxLength) {
-    return title;
-  }
-
-  let truncatedTitle = title.slice(0, maxLength);
-  while (
-    truncatedTitle.length > 0 &&
-    (truncatedTitle.endsWith(' ') || truncatedTitle.endsWith(','))
-  ) {
-    truncatedTitle = truncatedTitle.slice(0, -1);
-  }
-
-  return `${truncatedTitle}...`;
-};
 
 function MediaPlayer({
   currentSong,
   isPlaying,
   setIsPlaying,
   setIsLoading,
+  setSoundObject,
+  handlePlayPause,
 }: MediaPlayerProps): JSX.Element | null {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
@@ -150,17 +73,28 @@ function MediaPlayer({
     console.log('Loading preview');
     if (url !== null && url !== '') {
       try {
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          { uri: url },
-          { shouldPlay: true },
-          (status) => {
-            if (status.isLoaded && status.isPlaying) {
-              onPreviewLoaded();
+        const { sound: newSound, status: newStatus } =
+          await Audio.Sound.createAsync(
+            { uri: url },
+            { shouldPlay: true },
+            (status) => {
+              void (async () => {
+                if (status.isLoaded && status.isPlaying) {
+                  onPreviewLoaded();
+                }
+
+                if (status.isLoaded && status.didJustFinish) {
+                  console.log('Playback has finished');
+                  setIsPlaying(false);
+                  await newSound.unloadAsync();
+                  setSoundObject(null);
+                }
+              })();
             }
-          }
-        );
+          );
         await newSound.playAsync();
         setSound(newSound);
+        setSoundObject({ sound: newSound, status: newStatus });
       } catch (error) {
         console.error('Error while playing audio:', error);
       }
@@ -175,14 +109,8 @@ function MediaPlayer({
       void loadAndPlayPreview(currentSong.previewUrl, () => {
         setIsLoading(false);
       });
-    } else {
-      void sound?.pauseAsync();
     }
-  }, [isPlaying, currentSong]);
-
-  const handlePlayPause = (): void => {
-    setIsPlaying(!isPlaying);
-  };
+  }, [currentSong]);
 
   if (currentSong === null) {
     return null;

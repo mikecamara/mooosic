@@ -33,6 +33,9 @@ export default function App(): JSX.Element {
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [soundObject, setSoundObject] = useState<Audio.SoundObject | null>(
+    null
+  );
 
   useEffect(() => {
     const loadDefaultSongs = async (): Promise<void> => {
@@ -72,14 +75,44 @@ export default function App(): JSX.Element {
     }
   };
 
+  const handlePlayPause = async (): Promise<void> => {
+    if (soundObject !== null) {
+      const currentStatus = await soundObject.sound.getStatusAsync();
+      if (currentStatus.isLoaded) {
+        if (currentStatus.isPlaying) {
+          await soundObject.sound.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          await soundObject.sound.playAsync();
+          setIsPlaying(true);
+        }
+      }
+    } else if (currentSong !== null && !isPlaying) {
+      setIsPlaying(true);
+      onSongPress(currentSong, () => {
+        setIsLoading(false);
+      });
+    }
+  };
+
   const handleSongPress = (song: Song, onLoadComplete: () => void): void => {
     if (currentSong !== null && currentSong.id === song.id) {
-      setIsPlaying(!isPlaying);
-      onLoadComplete();
+      console.log('Restarting song.maradona..');
+      restartSong();
     } else {
+      console.log('Playing new song... romario');
       setCurrentSong(song);
       setIsPlaying(true);
       onLoadComplete();
+    }
+  };
+
+  const restartSong = async (): Promise<void> => {
+    console.log('Restarting song...');
+    if (soundObject !== null) {
+      setIsPlaying(false);
+      await soundObject.sound.setPositionAsync(0);
+      setIsPlaying(true);
     }
   };
 
@@ -102,6 +135,11 @@ export default function App(): JSX.Element {
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
           setIsLoading={setIsLoading}
+          onSongPress={handleSongPress}
+          restartSong={restartSong}
+          soundObject={soundObject}
+          setSoundObject={setSoundObject}
+          handlePlayPause={handlePlayPause}
         />
       </View>
     </View>

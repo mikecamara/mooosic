@@ -1,27 +1,10 @@
 import React, { useState } from 'react';
-import { TextInput, StyleSheet, View } from 'react-native';
+import { TextInput, View } from 'react-native';
+import styles from './SearchBar.styles.ts';
 
 interface SearchBarProps {
   onSearch: (searchQuery: string) => Promise<void>;
 }
-const GRAY_COLOR = '#CCC';
-const DARK_GRAY_COLOR = '#999';
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: DARK_GRAY_COLOR,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  input: {
-    backgroundColor: GRAY_COLOR,
-    borderColor: GRAY_COLOR,
-    borderRadius: 4,
-    borderWidth: 1,
-    height: 40,
-    paddingLeft: 8,
-  },
-});
 
 function SearchBar({ onSearch }: SearchBarProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');

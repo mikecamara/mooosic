@@ -4,65 +4,12 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
   Image,
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
 import type Song from '../../types/Song.ts';
-
-const GRAY_COLOR = '#e1e1e1';
-
-const styles = StyleSheet.create({
-  centered: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
-  },
-  image: {
-    height: 50,
-    width: 50,
-  },
-  listItem: {
-    alignItems: 'center',
-    borderBottomColor: GRAY_COLOR,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    padding: 10,
-  },
-  listItemAlbum: {
-    fontSize: 12,
-  },
-  listItemArtist: {
-    fontSize: 14,
-  },
-  listItemText: {
-    flex: 1,
-    marginLeft: 10,
-  },
-  listItemTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  noResults: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  selectedItem: {
-    backgroundColor: GRAY_COLOR,
-  },
-  speakerContainer: {
-    borderBottomWidth: 0,
-  },
-  speakerIcon: {
-    fontSize: 20,
-    marginLeft: 10,
-  },
-});
+import styles from './SongList.styles.ts';
 
 interface SongListProps {
   songs: Song[];
@@ -89,20 +36,31 @@ function SongList({
 
   const handleSongPress = (song: Song): void => {
     Keyboard.dismiss();
+
     if (currentSong !== null && currentSong.id === song.id) {
       if (isPlaying) {
-        return;
+        console.log('Restarting song...');
+        setIsPlaying(false);
+        setTimeout(() => {
+          onSongPress(song, () => {
+            setLoadingSongId(null);
+          });
+        }, 100);
+      } else {
+        console.log('Starting song...');
+        setIsPlaying(true);
+        onSongPress(song, () => {
+          setLoadingSongId(null);
+        });
       }
-      setIsPlaying(true);
     } else {
+      console.log('Playing new song...');
       setCurrentSong(song);
       setIsPlaying(true);
+      onSongPress(song, () => {
+        setLoadingSongId(null);
+      });
     }
-    setLoadingSongId(song.id);
-    setIsLoading(true);
-    onSongPress(song, () => {
-      setLoadingSongId(null);
-    });
   };
 
   const getSpeakerIcon = (): string => {
@@ -112,7 +70,7 @@ function SongList({
     if (isPlaying) {
       return '🔊';
     }
-    return '🔇';
+    return '';
   };
 
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
