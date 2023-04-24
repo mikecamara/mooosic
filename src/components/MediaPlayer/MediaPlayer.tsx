@@ -1,5 +1,5 @@
 import { BlurView } from 'expo-blur';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import {
   AppState,
@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import { Animated } from 'react-native';
 import type Song from '../../types/Song.ts';
 import styles from './MediaPlayer.styles.ts';
 import { truncateTitle } from './MediaPlayer.utils.ts';
@@ -30,6 +31,21 @@ function MediaPlayer({
   handlePlayPause,
 }: MediaPlayerProps): JSX.Element | null {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isMediaPlayerVisible, setIsMediaPlayerVisible] = useState(false);
+  const translateY = useRef(new Animated.Value(100)).current;
+  useEffect(() => {
+    const animationFunction = () => {
+      Animated.spring(translateY, {
+        toValue: isMediaPlayerVisible ? 0 : 100,
+        useNativeDriver: true,
+      }).start();
+    };
+    animationFunction();
+  }, [isMediaPlayerVisible]);
+
+  const handleMediaPlayerVisibility = (isVisible: boolean) => {
+    setIsMediaPlayerVisible(isVisible);
+  };
 
   useEffect(() => {
     const handleAppStateChange = async (
@@ -70,6 +86,7 @@ function MediaPlayer({
     url: string,
     onPreviewLoaded: () => void
   ): Promise<void> => {
+    handleMediaPlayerVisibility(true);
     console.log('Loading preview');
     if (url !== null && url !== '') {
       try {
@@ -117,24 +134,33 @@ function MediaPlayer({
   }
 
   return (
-    <View style={styles.mediaPlayerWrapper}>
-      <View style={styles.container}>
-        <BlurView intensity={50} style={styles.blurView} tint="light" />
-        <View style={styles.content}>
-          <View style={styles.songInfo}>
-            <Text style={styles.title}>
-              {truncateTitle(currentSong?.title ?? 'No song selected')}
-            </Text>
-            <Text style={styles.artist}>
-              {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
-            </Text>
+    <Animated.View
+      style={[styles.mediaPlayerWrapper, { transform: [{ translateY }] }]}
+    >
+      <View style={styles.mediaPlayerWrapper}>
+        <View style={styles.container}>
+          <BlurView intensity={50} style={styles.blurView} tint="light" />
+          <View style={styles.content}>
+            <View style={styles.songInfo}>
+              <Text style={styles.title}>
+                {truncateTitle(currentSong?.title ?? 'No song selected')}
+              </Text>
+              <Text style={styles.artist}>
+                {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.playButton}
+              onPress={handlePlayPause}
+            >
+              <Text style={styles.playButtonText}>
+                {isPlaying ? '⏸️' : '▶️'}
+              </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.playButton} onPress={handlePlayPause}>
-            <Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}</Text>
-          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
