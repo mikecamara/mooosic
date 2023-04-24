@@ -31,6 +31,7 @@ function SongList({
   setIsPlaying,
   isLoading,
   setIsLoading,
+  loadMoreSongs,
 }: SongListProps): JSX.Element {
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
 
@@ -115,6 +116,8 @@ function SongList({
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           keyboardShouldPersistTaps="always"
+          onEndReached={loadMoreSongs}
+          onEndReachedThreshold={0.5}
         />
       )}
     </View>

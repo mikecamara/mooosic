@@ -6,10 +6,12 @@ import AppStyles from './styles/AppStyles.ts';
 import type Song from './types/Song.ts';
 import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
 
-async function fetchDefaultSongs(): Promise<Song[]> {
+async function fetchDefaultSongs(page: number): Promise<Song[]> {
   const defaultQuery = 'farm+songs+and+other+animal+songs';
   const response = await fetch(
-    `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25`
+    `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25&offset=${
+      (page - 1) * 25
+    }`
   );
 
   if (!response.ok) {
@@ -36,6 +38,7 @@ export default function App(): JSX.Element {
   const [soundObject, setSoundObject] = useState<Audio.SoundObject | null>(
     null
   );
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     const loadDefaultSongs = async (): Promise<void> => {
@@ -116,6 +119,12 @@ export default function App(): JSX.Element {
     }
   };
 
+  const loadMoreSongs = async (): Promise<void> => {
+    setCurrentPage(currentPage + 1);
+    const newSongs = await fetchDefaultSongs(currentPage + 1);
+    setSongs([...songs, ...newSongs]);
+  };
+
   return (
     <View style={AppStyles.container}>
       <View style={AppStyles.mainContent}>
@@ -129,6 +138,7 @@ export default function App(): JSX.Element {
           setIsPlaying={setIsPlaying}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
+          loadMoreSongs={loadMoreSongs}
         />
         <MediaPlayer
           currentSong={currentSong}
