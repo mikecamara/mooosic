@@ -1,0 +1,27 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.(ts|tsx)$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": ["node_modules/better-docs/typescript"],
+  "opts": {
+    "encoding": "utf8",
+    "destination": "docs/",
+    "recurse": true,
+    "verbose": true,
+    "template": "node_modules/better-docs"
+  },
+  "templates": {
+    "better-docs": {
+      "title": "Mooosic Documentation",
+      "navLinks": [
+        {
+          "label": "Home",
+          "href": "index.html"
+        }
+      ]
+    }
+  },
+  "tsconfig": "./tsconfig.json"
+}

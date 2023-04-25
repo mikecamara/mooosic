@@ -6,6 +6,31 @@ import AppStyles from './styles/AppStyles.ts';
 import type Song from './types/Song.ts';
 import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
 
+/**
+ * Parses a raw song object returned from the iTunes API into a Song type.
+ *
+ * @param {any} result - The raw song object.
+ * @returns {Song} - The parsed song object.
+ */
+function parseSong(result: any): Song {
+  return {
+    id: result.trackId.toString(),
+    title: result.trackName,
+    artist: result.artistName,
+    album: result.collectionName,
+    albumArt: result.artworkUrl100,
+    playing: false,
+    previewUrl: result.previewUrl,
+    trackTimeMillis: result.trackTimeMillis,
+  };
+}
+
+/**
+ * Fetches a list of songs from the iTunes API with the given page number.
+ *
+ * @param {number} page - The page number for the API request.
+ * @returns {Promise<Song[]>} - A promise resolving to an array of songs.
+ */
 async function fetchDefaultSongs(page: number): Promise<Song[]> {
   const defaultQuery = 'red+hot';
   const response = await fetch(
@@ -19,18 +44,14 @@ async function fetchDefaultSongs(page: number): Promise<Song[]> {
   }
 
   const data = await response.json();
-  return data.results.map((result: any) => ({
-    id: result.trackId.toString(),
-    title: result.trackName,
-    artist: result.artistName,
-    album: result.collectionName,
-    albumArt: result.artworkUrl100,
-    playing: false,
-    previewUrl: result.previewUrl,
-    trackTimeMillis: result.trackTimeMillis,
-  }));
+  return data.results.map(parseSong);
 }
 
+/**
+ * The main App component.
+ *
+ * @returns {JSX.Element} - The rendered App component.
+ */
 export default function App(): JSX.Element {
   const [songs, setSongs] = useState<Song[]>([]);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
@@ -52,9 +73,15 @@ export default function App(): JSX.Element {
     void loadData();
   }, []);
 
+  /**
+   * Handles the search functionality.
+   *
+   * @param {string} searchQuery - The search query.
+   * @returns {Promise<void>}
+   */
   const handleSearch = async (searchQuery: string): Promise<void> => {
     if (searchQuery.trim() === '') {
-      const defaultSongs = await fetchDefaultSongs();
+      const defaultSongs = await fetchDefaultSongs(currentPage);
       setSongs(defaultSongs);
       return;
     }
@@ -64,22 +91,18 @@ export default function App(): JSX.Element {
 
     if (response.ok) {
       const data = await response.json();
-      const fetchedSongs = data.results.map((result: any) => ({
-        id: result.trackId.toString(),
-        title: result.trackName,
-        artist: result.artistName,
-        album: result.collectionName,
-        albumArt: result.artworkUrl100,
-        playing: false,
-        previewUrl: result.previewUrl,
-        trackTimeMillis: result.trackTimeMillis,
-      }));
+      const fetchedSongs = data.results.map(parseSong);
       setSongs(fetchedSongs);
     } else {
       console.error('Error fetching data from iTunes API:', response);
     }
   };
 
+  /**
+   * Handles the play and pause functionality.
+   *
+   * @returns {Promise<void>}
+   */
   const handlePlayPause = async (): Promise<void> => {
     if (soundObject !== null) {
       const currentStatus = await soundObject.sound.getStatusAsync();
@@ -100,6 +123,14 @@ export default function App(): JSX.Element {
     }
   };
 
+  /**
+   * Handles the song selection and updates the state accordingly.
+   *
+   * @param {Song} song - The selected song.
+   * @param {() => void} onLoadComplete - A callback function to be executed when the song is loaded.
+   * @returns {void}
+   */
+
   const handleSongPress = (song: Song, onLoadComplete: () => void): void => {
     if (currentSong !== null && currentSong.id === song.id) {
       restartSong();
@@ -110,6 +141,12 @@ export default function App(): JSX.Element {
     }
   };
 
+  /**
+   * Restarts the current song.
+   *
+   * @returns {Promise<void>}
+   */
+
   const restartSong = async (): Promise<void> => {
     if (soundObject !== null) {
       setIsPlaying(false);
@@ -117,6 +154,12 @@ export default function App(): JSX.Element {
       setIsPlaying(true);
     }
   };
+
+  /**
+   * Loads more songs from the API and appends them to the current list.
+   *
+   * @returns {Promise<void>}
+   */
 
   const loadMoreSongs = async (): Promise<void> => {
     setCurrentPage(currentPage + 1);

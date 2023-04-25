@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mooosic Documentation components/SongList/SongList.tsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                 
+                    
+                        <a
+                            class="link user-link "
+                            href="index.html"
+                        >
+                            Home
+                        </a>
+                    
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#MediaPlayer">MediaPlayer</a></li><li><a href="global.html#fetchDefaultSongs">fetchDefaultSongs</a></li><li><a href="global.html#parseSong">parseSong</a></li><li><a href="global.html#truncateTitle">truncateTitle</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/SongList/SongList.tsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Keyboard,
+  ActivityIndicator,
+} from 'react-native';
+import type Song from '../../types/Song.ts';
+import styles from './SongList.styles.ts';
+
+interface SongListProps {
+  songs: Song[];
+  onSongPress: (song: Song, onLoadComplete: () => void) => void;
+  currentSong: Song | null;
+  setCurrentSong: (song: Song | null) => void;
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+}
+
+function SongList({
+  songs,
+  onSongPress,
+  currentSong,
+  setCurrentSong,
+  isPlaying,
+  setIsPlaying,
+  isLoading,
+  setIsLoading,
+  loadMoreSongs,
+}: SongListProps): JSX.Element {
+  const [loadingSongId, setLoadingSongId] = useState&lt;string | null>(null);
+  /**
+   * Handles the song press event and updates the relevant states.
+   *
+   * @param {Song} song - The song object that was pressed.
+   */
+  const handleSongPress = (song: Song): void => {
+    Keyboard.dismiss();
+
+    if (currentSong !== null &amp;&amp; currentSong.id === song.id) {
+      if (isPlaying) {
+        setIsPlaying(false);
+        setTimeout(() => {
+          onSongPress(song, () => {
+            setLoadingSongId(null);
+          });
+        }, 100);
+      } else {
+        setIsPlaying(true);
+        onSongPress(song, () => {
+          setLoadingSongId(null);
+        });
+      }
+    } else {
+      setCurrentSong(song);
+      setIsPlaying(true);
+      onSongPress(song, () => {
+        setLoadingSongId(null);
+      });
+    }
+  };
+
+  /**
+   * Returns the appropriate speaker icon based on
+   * the loading and playing states.
+   *
+   * @returns {string} - The speaker icon as a string.
+   */
+  const getSpeakerIcon = (): string => {
+    if (isLoading) {
+      return '⏳';
+    }
+    if (isPlaying) {
+      return '🔊';
+    }
+    return '';
+  };
+
+  /**
+   * Converts the provided milliseconds to a minutes and seconds format.
+   *
+   * @param {number} millis - The duration in milliseconds.
+   * @returns {string} - The formatted duration string
+   * in "minutes:seconds" format.
+   */
+  const millisToMinutesAndSeconds = (millis: number): string => {
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return `${minutes}:${seconds &lt; 10 ? '0' : ''}${seconds}`;
+  };
+
+  /**
+   * Renders an individual item within the FlatList.
+   *
+   * @param {{ item: Song }} { item } - The song object to be rendered.
+   * @returns {JSX.Element} - The rendered list item component.
+   */
+  const renderItem = ({ item }: { item: Song }): JSX.Element => (
+    &lt;TouchableOpacity
+      style={[
+        styles.listItem,
+        currentSong !== null &amp;&amp;
+          currentSong.id === item.id &amp;&amp;
+          styles.selectedItem,
+      ]}
+      onPress={() => {
+        handleSongPress(item);
+      }}
+      testID={`song-${item.id}`}
+    >
+      &lt;Image style={styles.image} source={{ uri: item.albumArt }} />
+      &lt;View style={styles.listItemText}>
+        &lt;Text style={styles.listItemTitle}>{item.title}&lt;/Text>
+        &lt;Text style={styles.listItemArtist}>
+          {item.artist} - {millisToMinutesAndSeconds(item.trackTimeMillis)}
+        &lt;/Text>
+        &lt;Text style={styles.listItemAlbum}>{item.album}&lt;/Text>
+      &lt;/View>
+      {currentSong !== null &amp;&amp; currentSong.id === item.id &amp;&amp; (
+        &lt;View style={[styles.listItem, styles.speakerContainer]}>
+          {loadingSongId === item.id ? (
+            &lt;ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            &lt;Text style={styles.speakerIcon}>{getSpeakerIcon()}&lt;/Text>
+          )}
+        &lt;/View>
+      )}
+    &lt;/TouchableOpacity>
+  );
+
+  return (
+    &lt;View style={styles.container}>
+      {songs.length === 0 ? (
+        &lt;View style={styles.centered}>
+          &lt;Text style={styles.noResults}>No results found.&lt;/Text>
+        &lt;/View>
+      ) : (
+        &lt;FlatList
+          data={songs}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          keyboardShouldPersistTaps="always"
+          onEndReached={loadMoreSongs}
+          onEndReachedThreshold={0.5}
+        />
+      )}
+    &lt;/View>
+  );
+}
+
+export default SongList;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.48% </span>
+                <span class="strong">83.87% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/27</span>
+                <span class='fraction'>26/31</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/20</span>
+                <span class='fraction'>18/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">63.63% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>6/10</span>
+                <span class='fraction'>7/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.48% </span>
+                <span class="strong">83.87% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>22/27</span>
+                <span class='fraction'>26/31</span>
             </div>
         
             
@@ -188,7 +188,15 @@
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
 <a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -263,6 +271,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -271,6 +285,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -386,6 +402,12 @@ function SongList({
     return '';
   };
 &nbsp;
+  const millisToMinutesAndSeconds = (millis: number): string =&gt; {
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return `${minutes}:${seconds &lt; 10 ? <span class="branch-0 cbranch-no" title="branch not covered" >'0' </span>: ''}${seconds}`;
+  };
+&nbsp;
   const renderItem = ({ item }: { item: Song }): JSX.Element =&gt; (
     &lt;TouchableOpacity
       style={[
@@ -402,7 +424,9 @@ function SongList({
       &lt;Image style={styles.image} source={{ uri: item.albumArt }} /&gt;
       &lt;View style={styles.listItemText}&gt;
         &lt;Text style={styles.listItemTitle}&gt;{item.title}&lt;/Text&gt;
-        &lt;Text style={styles.listItemArtist}&gt;{item.artist}&lt;/Text&gt;
+        &lt;Text style={styles.listItemArtist}&gt;
+          {item.artist} - {millisToMinutesAndSeconds(item.trackTimeMillis)}
+        &lt;/Text&gt;
         &lt;Text style={styles.listItemAlbum}&gt;{item.album}&lt;/Text&gt;
       &lt;/View&gt;
       {currentSong !== null &amp;&amp; currentSong.id === item.id &amp;&amp; (
@@ -427,7 +451,7 @@ function SongList({
         &lt;FlatList
           data={songs}
           renderItem={renderItem}
-          keyExtractor={(item) =&gt; item.id}
+          keyExtractor={(item, index) =&gt; `${item.id}-${index}`}
           keyboardShouldPersistTaps="always"
           onEndReached={loadMoreSongs}
           onEndReachedThreshold={0.5}
@@ -445,7 +469,7 @@ export default SongList;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-25T06:36:39.429Z
+                at 2023-04-25T10:57:37.280Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
