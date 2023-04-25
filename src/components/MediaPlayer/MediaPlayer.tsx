@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { Animated, Easing } from 'react-native';
+import { Animated } from 'react-native';
 import type Song from '../../types/Song.ts';
 import styles from './MediaPlayer.styles.ts';
 import { truncateTitle } from './MediaPlayer.utils.ts';

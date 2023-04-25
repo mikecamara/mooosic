@@ -72,6 +72,7 @@ export default function App(): JSX.Element {
         albumArt: result.artworkUrl100,
         playing: false,
         previewUrl: result.previewUrl,
+        trackTimeMillis: result.trackTimeMillis,
       }));
       setSongs(fetchedSongs);
     } else {
