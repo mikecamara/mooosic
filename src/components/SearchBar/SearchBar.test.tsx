@@ -6,23 +6,13 @@ import SearchBar from './SearchBar.tsx';
 
 describe('SearchBar', () => {
   test('renders correctly', () => {
-    const { getByPlaceholderText } = render(
-      <SearchBar
-        onSearch={() => {
-          console.log('Search bar exists');
-        }}
-      />
-    );
+    const { getByPlaceholderText } = render(<SearchBar onSearch={() => {}} />);
     expect(getByPlaceholderText('Search for an artist')).toBeTruthy();
   });
 
   test('displays entered text', () => {
     const { getByPlaceholderText, getByDisplayValue } = render(
-      <SearchBar
-        onSearch={(searchQuery: string) => {
-          console.log('Search query:', searchQuery);
-        }}
-      />
+      <SearchBar onSearch={(searchQuery: string) => {}} />
     );
     fireEvent.changeText(getByPlaceholderText('Search for an artist'), 'test');
     expect(getByDisplayValue('test')).toBeTruthy();

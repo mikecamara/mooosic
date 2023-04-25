@@ -100,10 +100,8 @@ export default function App(): JSX.Element {
 
   const handleSongPress = (song: Song, onLoadComplete: () => void): void => {
     if (currentSong !== null && currentSong.id === song.id) {
-      console.log('Restarting song.maradona..');
       restartSong();
     } else {
-      console.log('Playing new song... romario');
       setCurrentSong(song);
       setIsPlaying(true);
       onLoadComplete();
@@ -111,7 +109,6 @@ export default function App(): JSX.Element {
   };
 
   const restartSong = async (): Promise<void> => {
-    console.log('Restarting song...');
     if (soundObject !== null) {
       setIsPlaying(false);
       await soundObject.sound.setPositionAsync(0);

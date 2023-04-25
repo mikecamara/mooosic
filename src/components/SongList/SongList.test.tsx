@@ -32,9 +32,7 @@ describe('SongList', () => {
     render(
       <SongList
         songs={mockSongs}
-        onSongPress={() => {
-          console.log('Song pressed');
-        }}
+        onSongPress={() => {}}
         currentSong={null}
         setCurrentSong={() => {}}
         isPlaying={false}
