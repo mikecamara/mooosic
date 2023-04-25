@@ -22,7 +22,7 @@ platform :ios do
     build_app(
       scheme: "mooosic",
       export_options: {
-        teamID: "CLN622EQ5G"
+        teamID: "teamIdAlphanumeric",
       }
     )
     upload_to_app_store
