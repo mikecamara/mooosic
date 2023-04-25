@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../utils/colors.ts';
 
-const { WHITE_COLOR, GRAY_COLOR, LIGHT_GRAY_COLOR, YELLOW_COLOR } = colors;
+const { WHITE_COLOR, LIGHT_GRAY_COLOR, YELLOW_COLOR, TRANSPARENT_COLOR } =
+  colors;
 
 const styles = StyleSheet.create({
   artist: {
@@ -13,19 +14,17 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: -10,
+    top: 0,
   },
   container: {
     alignItems: 'center',
-    borderColor: GRAY_COLOR,
-    borderTopWidth: 1,
+    backgroundColor: TRANSPARENT_COLOR,
     bottom: 0,
-    flexDirection: 'row',
+    flexDirection: 'column',
     height: 90,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     left: 0,
-    paddingBottom: 30,
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     position: 'absolute',
     right: 0,
   },
@@ -34,6 +33,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-between',
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+    width: '100%',
   },
   image: {
     borderRadius: 5,
@@ -59,6 +61,18 @@ const styles = StyleSheet.create({
     color: LIGHT_GRAY_COLOR,
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  progressBar: {
+    backgroundColor: YELLOW_COLOR,
+    height: 4,
+    width: '100%',
+  },
+  progressBarContainer: {
+    backgroundColor: LIGHT_GRAY_COLOR,
+    height: 4,
+    marginTop: -4,
+    overflow: 'hidden',
+    width: '100%',
   },
   songInfo: {
     alignItems: 'center',

@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { Animated } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import type Song from '../../types/Song.ts';
 import styles from './MediaPlayer.styles.ts';
 import { truncateTitle } from './MediaPlayer.utils.ts';
@@ -33,7 +33,27 @@ function MediaPlayer({
 }: MediaPlayerProps): JSX.Element | null {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isMediaPlayerVisible, setIsMediaPlayerVisible] = useState(false);
+  const [progress, setProgress] = useState<number>(0);
+
   const translateY = useRef(new Animated.Value(100)).current;
+
+  useEffect(() => {
+    if (sound !== null) {
+      const interval = setInterval(async () => {
+        const status = await sound.getStatusAsync();
+        if (status.isLoaded && status.durationMillis > 0) {
+          setProgress(status.positionMillis / status.durationMillis);
+        } else {
+          setProgress(0);
+        }
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [sound]);
+
   useEffect(() => {
     const animationFunction = () => {
       Animated.spring(translateY, {
@@ -135,36 +155,35 @@ function MediaPlayer({
     <Animated.View
       style={[styles.mediaPlayerWrapper, { transform: [{ translateY }] }]}
     >
-      <View style={styles.mediaPlayerWrapper}>
-        <View style={styles.container}>
-          <BlurView intensity={50} style={styles.blurView} tint="light" />
-          <View style={styles.content}>
-            <View style={styles.songInfo}>
-              {currentSong?.albumArt && (
-                <Image
-                  source={{ uri: currentSong.albumArt }}
-                  style={styles.image}
-                />
-              )}
-              <View>
-                <Text style={styles.title}>
-                  {truncateTitle(currentSong?.title ?? 'No song selected')}
-                </Text>
-                <Text style={styles.artist}>
-                  {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.playButton}
-              onPress={handlePlayPause}
-              testID="play-pause-button"
-            >
-              <Text style={styles.playButtonText}>
-                {isPlaying ? '⏸️' : '▶️'}
+      <View style={styles.container}>
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
+        </View>
+        <BlurView intensity={30} style={styles.blurView} tint="light" />
+        <View style={styles.content}>
+          <View style={styles.songInfo}>
+            {currentSong?.albumArt && (
+              <Image
+                source={{ uri: currentSong.albumArt }}
+                style={styles.image}
+              />
+            )}
+            <View>
+              <Text style={styles.title}>
+                {truncateTitle(currentSong?.title ?? 'No song selected')}
               </Text>
-            </TouchableOpacity>
+              <Text style={styles.artist}>
+                {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
+              </Text>
+            </View>
           </View>
+          <TouchableOpacity
+            style={styles.playButton}
+            onPress={handlePlayPause}
+            testID="play-pause-button"
+          >
+            <Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Animated.View>
