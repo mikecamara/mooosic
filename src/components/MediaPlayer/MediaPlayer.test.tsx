@@ -1,24 +1,66 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import MediaPlayer from './MediaPlayer.tsx';
 
-describe('MediaPlayer', () => {
-  it('renders the MediaPlayer with the current song and play button', () => {
-    const { getByText } = render(<MediaPlayer />);
+jest.mock('expo-av', () => {
+  const InterruptionModeIOS = {
+    MixWithOthers: 'InterruptionModeIOS.MixWithOthers',
+  };
+  const InterruptionModeAndroid = {
+    DuckOthers: 'InterruptionModeAndroid.DuckOthers',
+  };
+  const Audio = {
+    setAudioModeAsync: jest.fn(),
+    // Add any other methods or properties you are using from expo-av
+  };
+  return { Audio, InterruptionModeIOS, InterruptionModeAndroid };
+});
 
-    expect(getByText('Song 1')).toBeTruthy();
-    expect(getByText('Artist 1')).toBeTruthy();
-    expect(getByText('▶')).toBeTruthy();
+jest.mock('expo-blur', () => ({
+  BlurView: 'BlurView',
+}));
+
+describe('MediaPlayer', () => {
+  const song = {
+    id: 1,
+    title: 'Test Song',
+    artist: 'Test Artist',
+  };
+
+  test('renders correctly', () => {
+    const { getByText } = render(
+      <MediaPlayer
+        currentSong={song}
+        isPlaying={false}
+        setIsPlaying={() => {}}
+        setIsLoading={() => {}}
+        setSoundObject={() => {}}
+        handlePlayPause={() => {}}
+      />
+    );
+    expect(getByText(song.title)).toBeTruthy();
+    expect(getByText(song.artist)).toBeTruthy();
   });
 
-  it('changes the current song when the play button is pressed', () => {
-    const { getByText, rerender } = render(<MediaPlayer />);
+  it('toggles play/pause when the button is pressed', async () => {
+    const handlePlayPause = jest.fn();
+    const { getByTestId } = render(
+      <MediaPlayer
+        currentSong={song}
+        isPlaying={false}
+        setIsPlaying={() => {}}
+        setIsLoading={() => {}}
+        setSoundObject={() => {}}
+        handlePlayPause={handlePlayPause}
+      />
+    );
 
-    fireEvent.press(getByText('▶'));
-    rerender(<MediaPlayer />);
+    const playPauseButton = getByTestId('play-pause-button');
 
-    expect(getByText('Song 2')).toBeTruthy();
-    expect(getByText('Artist 2')).toBeTruthy();
+    fireEvent.press(playPauseButton);
+
+    await waitFor(() => {
+      expect(handlePlayPause).toHaveBeenCalled();
+    });
   });
 });

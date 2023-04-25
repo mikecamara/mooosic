@@ -152,6 +152,7 @@ function MediaPlayer({
             <TouchableOpacity
               style={styles.playButton}
               onPress={handlePlayPause}
+              testID="play-pause-button"
             >
               <Text style={styles.playButtonText}>
                 {isPlaying ? '⏸️' : '▶️'}
