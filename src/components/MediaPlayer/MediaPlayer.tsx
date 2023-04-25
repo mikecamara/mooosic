@@ -23,6 +23,21 @@ interface MediaPlayerProps {
   handlePlayPause: () => Promise<void>;
 }
 
+/**
+ * MediaPlayer component that handles audio playback, display
+ * of song information, and user interactions.
+ *
+ * @param {MediaPlayerProps} {
+ *   currentSong,
+ *   isPlaying,
+ *   setIsPlaying,
+ *   setIsLoading,
+ *   setSoundObject,
+ *   handlePlayPause,
+ * } - The MediaPlayer component properties.
+ * @returns {JSX.Element | null} - The rendered MediaPlayer
+ * component or null if the currentSong is null.
+ */
 function MediaPlayer({
   currentSong,
   isPlaying,
@@ -64,10 +79,22 @@ function MediaPlayer({
     animationFunction();
   }, [isMediaPlayerVisible]);
 
+  /**
+   * Updates the MediaPlayer visibility state.
+   *
+   * @param {boolean} isVisible - The visibility state of the MediaPlayer.
+   */
   const handleMediaPlayerVisibility = (isVisible: boolean) => {
     setIsMediaPlayerVisible(isVisible);
   };
 
+  /**
+   * Handles app state changes and adjusts audio playback accordingly.
+   *
+   * @param {AppStateStatus} nextAppState - The next app
+   * state after a change occurs.
+   * @returns {Promise<void>}
+   */
   useEffect(() => {
     const handleAppStateChange = async (
       nextAppState: AppStateStatus
@@ -80,6 +107,11 @@ function MediaPlayer({
       }
     };
 
+    /**
+     * Sets the audio mode for the app.
+     *
+     * @returns {Promise<void>}
+     */
     const setAudioMode = async (): Promise<void> => {
       await Audio.setAudioModeAsync({
         staysActiveInBackground: true,
@@ -103,6 +135,14 @@ function MediaPlayer({
     };
   }, [sound]);
 
+  /**
+   * Loads and plays the preview of the current song.
+   *
+   * @param {string} url - The URL of the song preview.
+   * @param {() => void} onPreviewLoaded - A callback function
+   * to be executed when the preview is loaded.
+   * @returns {Promise<void>}
+   */
   const loadAndPlayPreview = async (
     url: string,
     onPreviewLoaded: () => void

@@ -34,7 +34,11 @@ function SongList({
   loadMoreSongs,
 }: SongListProps): JSX.Element {
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
-
+  /**
+   * Handles the song press event and updates the relevant states.
+   *
+   * @param {Song} song - The song object that was pressed.
+   */
   const handleSongPress = (song: Song): void => {
     Keyboard.dismiss();
 
@@ -61,6 +65,12 @@ function SongList({
     }
   };
 
+  /**
+   * Returns the appropriate speaker icon based on
+   * the loading and playing states.
+   *
+   * @returns {string} - The speaker icon as a string.
+   */
   const getSpeakerIcon = (): string => {
     if (isLoading) {
       return '⏳';
@@ -71,12 +81,25 @@ function SongList({
     return '';
   };
 
+  /**
+   * Converts the provided milliseconds to a minutes and seconds format.
+   *
+   * @param {number} millis - The duration in milliseconds.
+   * @returns {string} - The formatted duration string
+   * in "minutes:seconds" format.
+   */
   const millisToMinutesAndSeconds = (millis: number): string => {
     const minutes = Math.floor(millis / 60000);
     const seconds = ((millis % 60000) / 1000).toFixed(0);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+  /**
+   * Renders an individual item within the FlatList.
+   *
+   * @param {{ item: Song }} { item } - The song object to be rendered.
+   * @returns {JSX.Element} - The rendered list item component.
+   */
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
     <TouchableOpacity
       style={[
