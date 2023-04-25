@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mooosic Documentation components/MediaPlayer/MediaPlayer.tsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                 
+                    
+                        <a
+                            class="link user-link "
+                            href="index.html"
+                        >
+                            Home
+                        </a>
+                    
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#MediaPlayer">MediaPlayer</a></li><li><a href="global.html#fetchDefaultSongs">fetchDefaultSongs</a></li><li><a href="global.html#parseSong">parseSong</a></li><li><a href="global.html#truncateTitle">truncateTitle</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/MediaPlayer/MediaPlayer.tsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { BlurView } from 'expo-blur';
+import React, { useState, useEffect, useRef } from 'react';
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
+import {
+  AppState,
+  type AppStateStatus,
+  Image,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import { Animated } from 'react-native';
+import type Song from '../../types/Song.ts';
+import styles from './MediaPlayer.styles.ts';
+import { truncateTitle } from './MediaPlayer.utils.ts';
+
+interface MediaPlayerProps {
+  currentSong: Song | null;
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  setIsLoading: (isLoading: boolean) => void;
+  setSoundObject: (soundObject: Audio.SoundObject | null) => void;
+  handlePlayPause: () => Promise&lt;void>;
+}
+
+/**
+ * MediaPlayer component that handles audio playback, display
+ * of song information, and user interactions.
+ *
+ * @param {MediaPlayerProps} {
+ *   currentSong,
+ *   isPlaying,
+ *   setIsPlaying,
+ *   setIsLoading,
+ *   setSoundObject,
+ *   handlePlayPause,
+ * } - The MediaPlayer component properties.
+ * @returns {JSX.Element | null} - The rendered MediaPlayer
+ * component or null if the currentSong is null.
+ */
+function MediaPlayer({
+  currentSong,
+  isPlaying,
+  setIsPlaying,
+  setIsLoading,
+  setSoundObject,
+  handlePlayPause,
+}: MediaPlayerProps): JSX.Element | null {
+  const [sound, setSound] = useState&lt;Audio.Sound | null>(null);
+  const [isMediaPlayerVisible, setIsMediaPlayerVisible] = useState(false);
+  const [progress, setProgress] = useState&lt;number>(0);
+
+  const translateY = useRef(new Animated.Value(100)).current;
+
+  useEffect(() => {
+    if (sound !== null) {
+      const interval = setInterval(async () => {
+        const status = await sound.getStatusAsync();
+        if (status.isLoaded &amp;&amp; status.durationMillis > 0) {
+          setProgress(status.positionMillis / status.durationMillis);
+        } else {
+          setProgress(0);
+        }
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [sound]);
+
+  useEffect(() => {
+    const animationFunction = () => {
+      Animated.spring(translateY, {
+        toValue: isMediaPlayerVisible ? 0 : 100,
+        useNativeDriver: true,
+      }).start();
+    };
+    animationFunction();
+  }, [isMediaPlayerVisible]);
+
+  /**
+   * Updates the MediaPlayer visibility state.
+   *
+   * @param {boolean} isVisible - The visibility state of the MediaPlayer.
+   */
+  const handleMediaPlayerVisibility = (isVisible: boolean) => {
+    setIsMediaPlayerVisible(isVisible);
+  };
+
+  /**
+   * Handles app state changes and adjusts audio playback accordingly.
+   *
+   * @param {AppStateStatus} nextAppState - The next app
+   * state after a change occurs.
+   * @returns {Promise&lt;void>}
+   */
+  useEffect(() => {
+    const handleAppStateChange = async (
+      nextAppState: AppStateStatus
+    ): Promise&lt;void> => {
+      if (nextAppState === 'background' &amp;&amp; sound !== null) {
+        const status = await sound.getStatusAsync();
+        if ('isPlaying' in status &amp;&amp; status.isPlaying) {
+          setIsPlaying(false);
+        }
+      }
+    };
+
+    /**
+     * Sets the audio mode for the app.
+     *
+     * @returns {Promise&lt;void>}
+     */
+    const setAudioMode = async (): Promise&lt;void> => {
+      await Audio.setAudioModeAsync({
+        staysActiveInBackground: true,
+        interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+        shouldDuckAndroid: false,
+      });
+    };
+
+    void setAudioMode();
+
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      // eslint-disable-next-line no-void
+      (nextAppState: AppStateStatus) => void handleAppStateChange(nextAppState)
+    );
+
+    return () => {
+      appStateSubscription.remove();
+      void sound?.unloadAsync();
+    };
+  }, [sound]);
+
+  /**
+   * Loads and plays the preview of the current song.
+   *
+   * @param {string} url - The URL of the song preview.
+   * @param {() => void} onPreviewLoaded - A callback function
+   * to be executed when the preview is loaded.
+   * @returns {Promise&lt;void>}
+   */
+  const loadAndPlayPreview = async (
+    url: string,
+    onPreviewLoaded: () => void
+  ): Promise&lt;void> => {
+    handleMediaPlayerVisibility(true);
+    if (url !== null &amp;&amp; url !== '') {
+      try {
+        const { sound: newSound, status: newStatus } =
+          await Audio.Sound.createAsync(
+            { uri: url },
+            { shouldPlay: true },
+            (status) => {
+              void (async () => {
+                if (status.isLoaded &amp;&amp; status.isPlaying) {
+                  onPreviewLoaded();
+                }
+
+                if (status.isLoaded &amp;&amp; status.didJustFinish) {
+                  setIsPlaying(false);
+                  await newSound.unloadAsync();
+                  setSoundObject(null);
+                }
+              })();
+            }
+          );
+        await newSound.playAsync();
+        console.log('Playing audio');
+        console.log(newSound);
+        setSound(newSound);
+        setSoundObject({ sound: newSound, status: newStatus });
+      } catch (error) {
+        console.error('Error while playing audio:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isPlaying &amp;&amp; currentSong !== null) {
+      void loadAndPlayPreview(currentSong.previewUrl, () => {
+        setIsLoading(false);
+      });
+    }
+  }, [currentSong]);
+
+  if (currentSong === null) {
+    return null;
+  }
+
+  return (
+    &lt;Animated.View
+      style={[styles.mediaPlayerWrapper, { transform: [{ translateY }] }]}
+    >
+      &lt;View style={styles.container}>
+        &lt;View style={styles.progressBarContainer}>
+          &lt;View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
+        &lt;/View>
+        &lt;BlurView intensity={30} style={styles.blurView} tint="light" />
+        &lt;View style={styles.content}>
+          &lt;View style={styles.songInfo}>
+            {currentSong?.albumArt &amp;&amp; (
+              &lt;Image
+                source={{ uri: currentSong.albumArt }}
+                style={styles.image}
+              />
+            )}
+            &lt;View>
+              &lt;Text style={styles.title}>
+                {truncateTitle(currentSong?.title ?? 'No song selected')}
+              &lt;/Text>
+              &lt;Text style={styles.artist}>
+                {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
+              &lt;/Text>
+            &lt;/View>
+          &lt;/View>
+          &lt;TouchableOpacity
+            style={styles.playButton}
+            onPress={handlePlayPause}
+            testID="play-pause-button"
+          >
+            &lt;Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}&lt;/Text>
+          &lt;/TouchableOpacity>
+        &lt;/View>
+      &lt;/View>
+    &lt;/Animated.View>
+  );
+}
+
+export default MediaPlayer;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
