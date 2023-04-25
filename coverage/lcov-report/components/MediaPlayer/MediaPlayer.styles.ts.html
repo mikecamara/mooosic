@@ -127,12 +127,56 @@
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,30 +238,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { StyleSheet } from 'react-native';
 import colors from '../../utils/colors.ts';
 &nbsp;
-const { ORANGE_COLOR, GRAY_COLOR, LIGHT_GRAY_COLOR, GREEN_COLOR } = colors;
+const { WHITE_COLOR, LIGHT_GRAY_COLOR, YELLOW_COLOR, TRANSPARENT_COLOR } =
+  colors;
 &nbsp;
 const styles = StyleSheet.create({
   artist: {
-    color: ORANGE_COLOR,
+    color: WHITE_COLOR,
+    fontWeight: 'bold',
   },
   blurView: {
     bottom: 0,
     left: 0,
     position: 'absolute',
     right: 0,
-    top: -10,
+    top: 0,
   },
   container: {
     alignItems: 'center',
-    borderColor: GRAY_COLOR,
-    borderTopWidth: 1,
+    backgroundColor: TRANSPARENT_COLOR,
     bottom: 0,
-    flexDirection: 'row',
-    height: 70,
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    height: 90,
+    justifyContent: 'flex-end',
     left: 0,
-    paddingBottom: 30,
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     position: 'absolute',
     right: 0,
   },
@@ -226,6 +270,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-between',
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+    width: '100%',
+  },
+  image: {
+    borderRadius: 5,
+    height: 40,
+    marginRight: 10,
+    width: 40,
   },
   mediaPlayerWrapper: {
     bottom: 0,
@@ -235,7 +288,7 @@ const styles = StyleSheet.create({
   },
   playButton: {
     alignItems: 'center',
-    backgroundColor: GREEN_COLOR,
+    backgroundColor: YELLOW_COLOR,
     borderRadius: 25,
     height: 50,
     justifyContent: 'center',
@@ -246,8 +299,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  progressBar: {
+    backgroundColor: YELLOW_COLOR,
+    height: 4,
+    width: '100%',
+  },
+  progressBarContainer: {
+    backgroundColor: LIGHT_GRAY_COLOR,
+    height: 4,
+    marginTop: -4,
+    overflow: 'hidden',
+    width: '100%',
+  },
   songInfo: {
-    flexDirection: 'column',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   title: {
     fontWeight: 'bold',
@@ -262,7 +328,7 @@ export default styles;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-25T06:36:39.429Z
+                at 2023-04-25T10:57:37.280Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

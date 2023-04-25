@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "app-entry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest",
     "lint": "eslint .",
@@ -21,6 +21,7 @@
     "expo-av": "~13.2.1",
     "expo-blur": "~12.2.2",
     "expo-cli": "^6.3.2",
+    "expo-splash-screen": "~0.18.1",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.6",
@@ -51,6 +52,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-native": "^4.0.0",
     "jest-environment-jsdom": "^29.5.0",
+    "jsdoc": "^4.0.2",
     "prettier": "^2.8.7",
     "react-test-renderer": "^18.2.0",
     "typescript": "^5.0.4"
