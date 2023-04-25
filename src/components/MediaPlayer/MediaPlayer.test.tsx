@@ -1,24 +1,94 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { AppState } from 'react-native';
 import MediaPlayer from './MediaPlayer.tsx';
 
-describe('MediaPlayer', () => {
-  it('renders the MediaPlayer with the current song and play button', () => {
-    const { getByText } = render(<MediaPlayer />);
+const appStateSubscriptionMock = {
+  remove: jest.fn(),
+};
 
-    expect(getByText('Song 1')).toBeTruthy();
-    expect(getByText('Artist 1')).toBeTruthy();
-    expect(getByText('▶')).toBeTruthy();
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+jest.mock('expo-av', () => {
+  const InterruptionModeIOS = {
+    MixWithOthers: 'InterruptionModeIOS.MixWithOthers',
+  };
+  const InterruptionModeAndroid = {
+    DuckOthers: 'InterruptionModeAndroid.DuckOthers',
+  };
+  const unloadAsyncMock = jest.fn(); // Move the declaration inside the mock implementation
+  const Audio = {
+    setAudioModeAsync: jest.fn(
+      async () =>
+        await Promise.resolve({
+          unloadAsync: unloadAsyncMock,
+        })
+    ),
+  };
+  return { Audio, InterruptionModeIOS, InterruptionModeAndroid };
+});
+
+jest.mock('expo-blur', () => ({
+  BlurView: 'BlurView',
+}));
+
+describe('MediaPlayer', () => {
+  const song = {
+    id: 1,
+    title: 'Test Song',
+    artist: 'Test Artist',
+  };
+
+  test('renders correctly', () => {
+    const { getByText } = render(
+      <MediaPlayer
+        currentSong={song}
+        isPlaying={false}
+        setIsPlaying={() => {}}
+        setIsLoading={() => {}}
+        setSoundObject={() => {}}
+        handlePlayPause={() => {}}
+      />
+    );
+    expect(getByText(song.title)).toBeTruthy();
+    expect(getByText(song.artist)).toBeTruthy();
   });
 
-  it('changes the current song when the play button is pressed', () => {
-    const { getByText, rerender } = render(<MediaPlayer />);
+  test('hides media player when currentSong prop is null', () => {
+    const { queryByTestId } = render(
+      <MediaPlayer
+        currentSong={null}
+        isPlaying={false}
+        setIsPlaying={() => {}}
+        setIsLoading={() => {}}
+        setSoundObject={() => {}}
+        handlePlayPause={() => {}}
+      />
+    );
+    expect(queryByTestId('media-player')).toBeFalsy();
+  });
 
-    fireEvent.press(getByText('▶'));
-    rerender(<MediaPlayer />);
+  it('toggles play/pause when the button is pressed', async () => {
+    const handlePlayPause = jest.fn();
+    const { getByTestId } = render(
+      <MediaPlayer
+        currentSong={song}
+        isPlaying={false}
+        setIsPlaying={() => {}}
+        setIsLoading={() => {}}
+        setSoundObject={() => {}}
+        handlePlayPause={handlePlayPause}
+      />
+    );
 
-    expect(getByText('Song 2')).toBeTruthy();
-    expect(getByText('Artist 2')).toBeTruthy();
+    const playPauseButton = getByTestId('play-pause-button');
+
+    fireEvent.press(playPauseButton);
+
+    await waitFor(() => {
+      expect(handlePlayPause).toHaveBeenCalled();
+    });
   });
 });

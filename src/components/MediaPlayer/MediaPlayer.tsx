@@ -87,7 +87,6 @@ function MediaPlayer({
     onPreviewLoaded: () => void
   ): Promise<void> => {
     handleMediaPlayerVisibility(true);
-    console.log('Loading preview');
     if (url !== null && url !== '') {
       try {
         const { sound: newSound, status: newStatus } =
@@ -101,7 +100,6 @@ function MediaPlayer({
                 }
 
                 if (status.isLoaded && status.didJustFinish) {
-                  console.log('Playback has finished');
                   setIsPlaying(false);
                   await newSound.unloadAsync();
                   setSoundObject(null);
@@ -115,9 +113,6 @@ function MediaPlayer({
       } catch (error) {
         console.error('Error while playing audio:', error);
       }
-    } else {
-      console.log('Cannot load an AV asset from a null playback source.');
-      console.warn('Cannot load an AV asset from a null playback source.');
     }
   };
 
@@ -152,6 +147,7 @@ function MediaPlayer({
             <TouchableOpacity
               style={styles.playButton}
               onPress={handlePlayPause}
+              testID="play-pause-button"
             >
               <Text style={styles.playButtonText}>
                 {isPlaying ? '⏸️' : '▶️'}

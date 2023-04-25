@@ -36,7 +36,7 @@
 
 6. Write tests (1.5 days, 8 points)
 
-- Unit tests for individual components and functions (0.5 day)
+- Unit tests for individual components and functions (0.5 day) ✅
 - Integration tests for the app's main features and API calls (0.5 day)
 - End-to-end tests to simulate user interactions and ensure the app works as expected (0.5 day)
 

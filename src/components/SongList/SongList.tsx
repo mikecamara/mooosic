@@ -40,7 +40,6 @@ function SongList({
 
     if (currentSong !== null && currentSong.id === song.id) {
       if (isPlaying) {
-        console.log('Restarting song...');
         setIsPlaying(false);
         setTimeout(() => {
           onSongPress(song, () => {
@@ -48,14 +47,12 @@ function SongList({
           });
         }, 100);
       } else {
-        console.log('Starting song...');
         setIsPlaying(true);
         onSongPress(song, () => {
           setLoadingSongId(null);
         });
       }
     } else {
-      console.log('Playing new song...');
       setCurrentSong(song);
       setIsPlaying(true);
       onSongPress(song, () => {
@@ -85,6 +82,7 @@ function SongList({
       onPress={() => {
         handleSongPress(item);
       }}
+      testID={`song-${item.id}`}
     >
       <Image style={styles.image} source={{ uri: item.albumArt }} />
       <View style={styles.listItemText}>
@@ -114,7 +112,7 @@ function SongList({
         <FlatList
           data={songs}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           keyboardShouldPersistTaps="always"
           onEndReached={loadMoreSongs}
           onEndReachedThreshold={0.5}
