@@ -85,6 +85,7 @@ function SongList({
       onPress={() => {
         handleSongPress(item);
       }}
+      testID={`song-${item.id}`}
     >
       <Image style={styles.image} source={{ uri: item.albumArt }} />
       <View style={styles.listItemText}>

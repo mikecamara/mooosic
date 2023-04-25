@@ -1,6 +1,15 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { AppState } from 'react-native';
 import MediaPlayer from './MediaPlayer.tsx';
+
+const appStateSubscriptionMock = {
+  remove: jest.fn(),
+};
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 jest.mock('expo-av', () => {
   const InterruptionModeIOS = {
@@ -9,9 +18,14 @@ jest.mock('expo-av', () => {
   const InterruptionModeAndroid = {
     DuckOthers: 'InterruptionModeAndroid.DuckOthers',
   };
+  const unloadAsyncMock = jest.fn(); // Move the declaration inside the mock implementation
   const Audio = {
-    setAudioModeAsync: jest.fn(),
-    // Add any other methods or properties you are using from expo-av
+    setAudioModeAsync: jest.fn(
+      async () =>
+        await Promise.resolve({
+          unloadAsync: unloadAsyncMock,
+        })
+    ),
   };
   return { Audio, InterruptionModeIOS, InterruptionModeAndroid };
 });
@@ -40,6 +54,20 @@ describe('MediaPlayer', () => {
     );
     expect(getByText(song.title)).toBeTruthy();
     expect(getByText(song.artist)).toBeTruthy();
+  });
+
+  test('hides media player when currentSong prop is null', () => {
+    const { queryByTestId } = render(
+      <MediaPlayer
+        currentSong={null}
+        isPlaying={false}
+        setIsPlaying={() => {}}
+        setIsLoading={() => {}}
+        setSoundObject={() => {}}
+        handlePlayPause={() => {}}
+      />
+    );
+    expect(queryByTestId('media-player')).toBeFalsy();
   });
 
   it('toggles play/pause when the button is pressed', async () => {
