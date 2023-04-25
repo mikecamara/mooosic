@@ -9,7 +9,7 @@ import { Dimensions } from 'react-native';
  * screen width to be used for the maximum length of the title.
  * @returns {string} - The truncated title string.
  */
-export const truncateTitle = (title: string, maxLengthRatio = 0.09): string => {
+export const truncateTitle = (title: string, maxLengthRatio = 0.07): string => {
   const screenWidth = Dimensions.get('window').width;
   const maxLength = Math.floor(screenWidth * maxLengthRatio);
 

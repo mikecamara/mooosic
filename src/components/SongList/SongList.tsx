@@ -71,6 +71,12 @@ function SongList({
     return '';
   };
 
+  const millisToMinutesAndSeconds = (millis: number): string => {
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
     <TouchableOpacity
       style={[
@@ -87,7 +93,9 @@ function SongList({
       <Image style={styles.image} source={{ uri: item.albumArt }} />
       <View style={styles.listItemText}>
         <Text style={styles.listItemTitle}>{item.title}</Text>
-        <Text style={styles.listItemArtist}>{item.artist}</Text>
+        <Text style={styles.listItemArtist}>
+          {item.artist} - {millisToMinutesAndSeconds(item.trackTimeMillis)}
+        </Text>
         <Text style={styles.listItemAlbum}>{item.album}</Text>
       </View>
       {currentSong !== null && currentSong.id === item.id && (
