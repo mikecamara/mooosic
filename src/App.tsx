@@ -27,6 +27,7 @@ async function fetchDefaultSongs(page: number): Promise<Song[]> {
     albumArt: result.artworkUrl100,
     playing: false,
     previewUrl: result.previewUrl,
+    trackTimeMillis: result.trackTimeMillis,
   }));
 }
 

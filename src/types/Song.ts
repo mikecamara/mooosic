@@ -8,6 +8,7 @@ interface Song {
   title: string;
   artist?: string;
   previewUrl: string;
+  trackTimeMillis?: number;
 }
 
 export default Song;

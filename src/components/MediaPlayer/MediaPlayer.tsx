@@ -4,6 +4,7 @@ import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import {
   AppState,
   type AppStateStatus,
+  Image,
   View,
   Text,
   TouchableOpacity,
@@ -108,6 +109,8 @@ function MediaPlayer({
             }
           );
         await newSound.playAsync();
+        console.log('Playing audio');
+        console.log(newSound);
         setSound(newSound);
         setSoundObject({ sound: newSound, status: newStatus });
       } catch (error) {
@@ -137,12 +140,20 @@ function MediaPlayer({
           <BlurView intensity={50} style={styles.blurView} tint="light" />
           <View style={styles.content}>
             <View style={styles.songInfo}>
-              <Text style={styles.title}>
-                {truncateTitle(currentSong?.title ?? 'No song selected')}
-              </Text>
-              <Text style={styles.artist}>
-                {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
-              </Text>
+              {currentSong?.albumArt && (
+                <Image
+                  source={{ uri: currentSong.albumArt }}
+                  style={styles.image}
+                />
+              )}
+              <View>
+                <Text style={styles.title}>
+                  {truncateTitle(currentSong?.title ?? 'No song selected')}
+                </Text>
+                <Text style={styles.artist}>
+                  {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
+                </Text>
+              </View>
             </View>
             <TouchableOpacity
               style={styles.playButton}

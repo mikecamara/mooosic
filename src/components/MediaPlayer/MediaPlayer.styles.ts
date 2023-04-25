@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../utils/colors.ts';
 
-const { ORANGE_COLOR, GRAY_COLOR, LIGHT_GRAY_COLOR, GREEN_COLOR } = colors;
+const { WHITE_COLOR, GRAY_COLOR, LIGHT_GRAY_COLOR, YELLOW_COLOR } = colors;
 
 const styles = StyleSheet.create({
   artist: {
-    color: ORANGE_COLOR,
+    color: WHITE_COLOR,
+    fontWeight: 'bold',
   },
   blurView: {
     bottom: 0,
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     bottom: 0,
     flexDirection: 'row',
-    height: 70,
+    height: 90,
     justifyContent: 'space-between',
     left: 0,
     paddingBottom: 30,
@@ -34,6 +35,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  image: {
+    borderRadius: 5,
+    height: 40,
+    marginRight: 10,
+    width: 40,
+  },
   mediaPlayerWrapper: {
     bottom: 0,
     left: 0,
@@ -42,7 +49,7 @@ const styles = StyleSheet.create({
   },
   playButton: {
     alignItems: 'center',
-    backgroundColor: GREEN_COLOR,
+    backgroundColor: YELLOW_COLOR,
     borderRadius: 25,
     height: 50,
     justifyContent: 'center',
@@ -54,7 +61,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   songInfo: {
-    flexDirection: 'column',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   title: {
     fontWeight: 'bold',
