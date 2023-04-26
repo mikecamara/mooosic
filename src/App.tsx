@@ -33,18 +33,24 @@ function parseSong(result: any): Song {
  */
 async function fetchDefaultSongs(page: number): Promise<Song[]> {
   const defaultQuery = 'red+hot';
-  const response = await fetch(
-    `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25&offset=${
-      (page - 1) * 25
-    }`
-  );
 
-  if (!response.ok) {
-    throw new Error('Error fetching data from iTunes API');
+  try {
+    const response = await fetch(
+      `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25&offset=${
+        (page - 1) * 25
+      }`
+    );
+
+    if (!response.ok) {
+      throw new Error('Error fetching data from iTunes API');
+    }
+
+    const data = await response.json();
+    return data.results.map(parseSong);
+  } catch (error) {
+    // Propagate the error to the caller by rejecting the Promise
+    return Promise.reject(error);
   }
-
-  const data = await response.json();
-  return data.results.map(parseSong);
 }
 
 /**
@@ -80,21 +86,28 @@ export default function App(): JSX.Element {
    * @returns {Promise<void>}
    */
   const handleSearch = async (searchQuery: string): Promise<void> => {
-    if (searchQuery.trim() === '') {
-      const defaultSongs = await fetchDefaultSongs(currentPage);
-      setSongs(defaultSongs);
-      return;
-    }
-    const response = await fetch(
-      `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song`
-    );
+    try {
+      if (searchQuery.trim() === '') {
+        const defaultSongs = await fetchDefaultSongs(currentPage);
+        setSongs(defaultSongs);
+        return;
+      }
 
-    if (response.ok) {
-      const data = await response.json();
-      const fetchedSongs = data.results.map(parseSong);
-      setSongs(fetchedSongs);
-    } else {
-      console.error('Error fetching data from iTunes API:', response);
+      const response = await fetch(
+        `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedSongs = data.results.map(parseSong);
+        setSongs(fetchedSongs);
+      } else {
+        throw new Error(
+          `Error fetching data from iTunes API: ${response.statusText}`
+        );
+      }
+    } catch (error) {
+      console.error('Error occurred while searching:', error);
     }
   };
 
