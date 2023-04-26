@@ -97,7 +97,6 @@ To generate documentation using better-docs, first install the npm package:
 ```
 npm install better-docs
 npm run docs
-
 ```
 
 After generating the documentation, uninstall the better-docs package to avoid conflicts with the latest React version:
