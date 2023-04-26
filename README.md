@@ -142,6 +142,8 @@ Before diving into the code, we carefully analyzed the project requirements and 
 
 To effectively manage the project and ensure timely delivery, we broke down the tasks into smaller, manageable subtasks and assigned time estimates to each. This approach helped us stay organized and on track throughout the development process.
 
+[See project requirements](./requirements/)
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
