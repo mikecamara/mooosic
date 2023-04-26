@@ -40,6 +40,10 @@ jobs:
         with:
           name: coverage
 
+      - name: Fix lcov paths
+        run: |
+          sed -i 's#/Users/mikecamara/Projects/mooosic/##g' coverage/lcov.info
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
