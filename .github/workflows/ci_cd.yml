@@ -29,16 +29,14 @@ jobs:
       - name: Run tests with coverage
         run: npm run coverage
 
+      - name: List coverage directory contents
+        run: ls -la coverage/
+
       - name: Archive coverage report
         uses: actions/upload-artifact@v2
         with:
           name: coverage
           path: coverage/
-
-      - name: Download coverage report
-        uses: actions/download-artifact@v2
-        with:
-          name: coverage
 
       - name: Fix lcov paths
         run: |

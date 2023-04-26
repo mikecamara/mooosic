@@ -1,7 +1,5 @@
 [![CICD](https://github.com/mikecamara/mooosic/actions/workflows/ci_cd.yml/badge.svg)](https://github.com/mikecamara/mooosic/actions/workflows/ci_cd.yml)
 
-[![codecov](https://codecov.io/gh/mikecamara/mooosic/branch/main/graph/badge.svg)](https://codecov.io/gh/mikecamara/mooosic)
-
 # Mooosic 🐄🎵
 
 A simple and cowsome music player app that allows users to search for their favorite artists using the iTunes Search API. Built with React Native and Expo.
