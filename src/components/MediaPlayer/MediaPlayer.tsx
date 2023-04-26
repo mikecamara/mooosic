@@ -169,8 +169,6 @@ function MediaPlayer({
             }
           );
         await newSound.playAsync();
-        console.log('Playing audio');
-        console.log(newSound);
         setSound(newSound);
         setSoundObject({ sound: newSound, status: newStatus });
       } catch (error) {
