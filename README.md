@@ -142,5 +142,3 @@ This project is licensed under the [MIT License](LICENSE).
 
 - Special thanks to the iTunes Search API for providing the music data.
 - Inspired by the love for cows and music 🐄🎵.
-
-[![codecov](https://codecov.io/gh/mikecamara/mooosic/branch/main/graph/badge.svg)](https://codecov.io/gh/mikecamara/mooosic)
