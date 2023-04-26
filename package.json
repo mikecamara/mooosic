@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest",
+    "test": "npx jest",
     "lint": "eslint .",
     "coverage": "jest --coverage",
     "docs": "jsdoc -c jsdoc.json"
@@ -40,7 +40,6 @@
     "@types/react": "~18.0.14",
     "@types/react-native": "^0.71.6",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "better-docs": "^2.7.2",
     "eslint": "^8.38.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",
