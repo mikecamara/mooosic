@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "test": "npx jest",
     "lint": "eslint .",
-    "coverage": "jest --coverage",
+    "coverage": "npx jest --coverage",
     "docs": "jsdoc -c jsdoc.json"
   },
   "dependencies": {
