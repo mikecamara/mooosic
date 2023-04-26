@@ -4,7 +4,16 @@
 
 A simple and cowsome music player app that allows users to search for their favorite artists using the iTunes Search API. Built with React Native and Expo.
 
-![Mooosic App Demo](app-demo.gif)
+<table style="border-collapse: collapse; border: 0;">
+  <tr>
+    <td style="width: 45%; padding-right: 10px; border: none;">
+      <img src="./screenshots/mooosic-screenshot.png" alt="Mooosic App Demo" width="100%" />
+    </td>
+    <td style="width: 45%; padding-left: 10px; border: none;">
+      <img src="./screenshots/mooosic-search.png" alt="Mooosic App Search" width="100%" />
+    </td>
+  </tr>
+</table>
 
 ## Features
 
