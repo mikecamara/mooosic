@@ -1,3 +1,5 @@
+[![CICD](https://github.com/mikecamara/mooosic/actions/workflows/ci_cd.yml/badge.svg)](https://github.com/mikecamara/mooosic/actions/workflows/ci_cd.yml)
+
 # Mooosic 🐄🎵
 
 A simple and cowsome music player app that allows users to search for their favorite artists using the iTunes Search API. Built with React Native and Expo.
@@ -26,15 +28,19 @@ A simple and cowsome music player app that allows users to search for their favo
 git clone https://github.com/mikecamara/mooosic.git
 cd mooosic
 ```
+
 2. Install dependencies:
+
 ```
 npm install
 ```
 
 or
+
 ```
 yarn
 ```
+
 3. Start the development server:
 
 ```
@@ -42,7 +48,6 @@ expo start
 ```
 
 4. Follow the instructions in the Expo CLI to run the app on your device or emulator.
-
 
 ## Usage
 
@@ -80,4 +85,3 @@ This project is licensed under the [MIT License](LICENSE).
 
 - Special thanks to the iTunes Search API for providing the music data.
 - Inspired by the love for cows and music 🐄🎵.
-
