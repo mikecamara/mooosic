@@ -99,7 +99,7 @@ npm install better-docs
 npm run docs
 ```
 
-After generating the documentation, uninstall the better-docs package to avoid conflicts with the latest React version:
+After generating the documentation, uninstall the better-docs package to avoid conflicts with the latest React version.
 
 ## Known Issues and Limitations
 
@@ -110,7 +110,8 @@ After generating the documentation, uninstall the better-docs package to avoid c
 - Certifications and sign-in issues with iOS/Android developer accounts need to be fixed to enable Fastlane to automatically deploy the app to the store.
 - End-to-end tests with Detox need to be added.
 - Integration tests need to be added.
-- Documentation generation with typecript better-docs has deprecated npm packages
+- Documentation generation with typecript better-docs has deprecated npm packages.
+- There are some Expo Go warnings regarding possible unhandled promises that must be dealt with.
 
 ## Contributing
 
