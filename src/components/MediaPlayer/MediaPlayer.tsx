@@ -57,15 +57,20 @@ function MediaPlayer({
 
     if (sound !== null) {
       const updateProgress = async (): Promise<void> => {
-        const status = await sound.getStatusAsync();
-        if (status.isLoaded) {
-          const duration = status.durationMillis ?? 0;
-          if (duration > 0) {
-            setProgress(status.positionMillis / duration);
+        try {
+          const status = await sound.getStatusAsync();
+          if (status.isLoaded) {
+            const duration = status.durationMillis ?? 0;
+            if (duration > 0) {
+              setProgress(status.positionMillis / duration);
+            } else {
+              setProgress(0);
+            }
           } else {
             setProgress(0);
           }
-        } else {
+        } catch (error) {
+          console.error('Error while updating progress:', error);
           setProgress(0);
         }
       };
@@ -112,11 +117,15 @@ function MediaPlayer({
     const handleAppStateChange = async (
       nextAppState: AppStateStatus
     ): Promise<void> => {
-      if (nextAppState === 'background' && sound !== null) {
-        const status = await sound.getStatusAsync();
-        if ('isPlaying' in status && status.isPlaying) {
-          setIsPlaying(false);
+      try {
+        if (nextAppState === 'background' && sound !== null) {
+          const status = await sound.getStatusAsync();
+          if ('isPlaying' in status && status.isPlaying) {
+            setIsPlaying(false);
+          }
         }
+      } catch (error) {
+        console.error('Error while handling app state change:', error);
       }
     };
 
@@ -126,12 +135,28 @@ function MediaPlayer({
      * @returns {Promise<void>}
      */
     const setAudioMode = async (): Promise<void> => {
-      await Audio.setAudioModeAsync({
-        staysActiveInBackground: true,
-        interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
-        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-        shouldDuckAndroid: false,
-      });
+      try {
+        await Audio.setAudioModeAsync({
+          staysActiveInBackground: true,
+          interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+          interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+          shouldDuckAndroid: false,
+        });
+      } catch (error) {
+        try {
+          await Audio.setAudioModeAsync({
+            staysActiveInBackground: false,
+            interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+            interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+            shouldDuckAndroid: true,
+          });
+        } catch (fallbackError) {
+          console.error(
+            'Error while setting fallback audio mode:',
+            fallbackError
+          );
+        }
+      }
     };
 
     void setAudioMode();
