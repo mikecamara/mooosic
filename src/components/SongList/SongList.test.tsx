@@ -46,7 +46,7 @@ describe('SongList', () => {
     expect(screen.getByTestId('song-3')).toBeTruthy();
   });
 
-  test('calls setCurrentSong and setIsPlaying with the correct arguments when a new song is played', () => {
+  test('calls setCurrentSong and setIsPlaying', () => {
     const setCurrentSongMock = jest.fn();
     const setIsPlayingMock = jest.fn();
     render(
@@ -70,7 +70,7 @@ describe('SongList', () => {
     expect(setIsPlayingMock).toHaveBeenCalledWith(true);
   });
 
-  test('calls setIsPlaying with the correct arguments when a playing song is paused', () => {
+  test('calls setIsPlaying with the correct arguments when paused', () => {
     const setIsPlayingMock = jest.fn();
     const song = mockSongs[0];
     render(
@@ -92,7 +92,7 @@ describe('SongList', () => {
     expect(setIsPlayingMock).toHaveBeenCalledWith(false);
   });
 
-  test('calls setIsPlaying with the correct arguments when a paused song is restarted', () => {
+  test('calls setIsPlaying with the correct arguments when restarted', () => {
     const setIsPlayingMock = jest.fn();
     const song = mockSongs[0];
     render(

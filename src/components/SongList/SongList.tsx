@@ -13,13 +13,13 @@ import styles from './SongList.styles.ts';
 
 interface SongListProps {
   songs: Song[];
-  onSongPress: (song: Song, onLoadComplete: () => void) => void;
+  onSongPress: (song: Song, onLoadComplete: () => void) => Promise<void>;
   currentSong: Song | null;
   setCurrentSong: (song: Song | null) => void;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
   isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
+  loadMoreSongs: () => Promise<void>;
 }
 
 function SongList({
@@ -30,7 +30,6 @@ function SongList({
   isPlaying,
   setIsPlaying,
   isLoading,
-  setIsLoading,
   loadMoreSongs,
 }: SongListProps): JSX.Element {
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
@@ -46,20 +45,20 @@ function SongList({
       if (isPlaying) {
         setIsPlaying(false);
         setTimeout(() => {
-          onSongPress(song, () => {
+          void onSongPress(song, () => {
             setLoadingSongId(null);
           });
         }, 100);
       } else {
         setIsPlaying(true);
-        onSongPress(song, () => {
+        void onSongPress(song, () => {
           setLoadingSongId(null);
         });
       }
     } else {
       setCurrentSong(song);
       setIsPlaying(true);
-      onSongPress(song, () => {
+      void onSongPress(song, () => {
         setLoadingSongId(null);
       });
     }
@@ -90,7 +89,7 @@ function SongList({
    */
   const millisToMinutesAndSeconds = (millis: number): string => {
     const minutes = Math.floor(millis / 60000);
-    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    const seconds = Number(((millis % 60000) / 1000).toFixed(0));
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
@@ -117,7 +116,7 @@ function SongList({
       <View style={styles.listItemText}>
         <Text style={styles.listItemTitle}>{item.title}</Text>
         <Text style={styles.listItemArtist}>
-          {item.artist} - {millisToMinutesAndSeconds(item.trackTimeMillis)}
+          {item.artist} - {millisToMinutesAndSeconds(item.trackTimeMillis ?? 0)}
         </Text>
         <Text style={styles.listItemAlbum}>{item.album}</Text>
       </View>
@@ -145,7 +144,12 @@ function SongList({
           renderItem={renderItem}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           keyboardShouldPersistTaps="always"
-          onEndReached={loadMoreSongs}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onEndReached={async () => {
+            if (!isLoading) {
+              await loadMoreSongs();
+            }
+          }}
           onEndReachedThreshold={0.5}
         />
       )}

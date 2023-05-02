@@ -53,38 +53,56 @@ function MediaPlayer({
   const translateY = useRef(new Animated.Value(100)).current;
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
     if (sound !== null) {
-      const interval = setInterval(async () => {
-        const status = await sound.getStatusAsync();
-        if (status.isLoaded && status.durationMillis > 0) {
-          setProgress(status.positionMillis / status.durationMillis);
-        } else {
+      const updateProgress = async (): Promise<void> => {
+        try {
+          const status = await sound.getStatusAsync();
+          if (status.isLoaded) {
+            const duration = status.durationMillis ?? 0;
+            if (duration > 0) {
+              setProgress(status.positionMillis / duration);
+            } else {
+              setProgress(0);
+            }
+          } else {
+            setProgress(0);
+          }
+        } catch (error) {
+          console.error('Error while updating progress:', error);
           setProgress(0);
         }
-      }, 1000);
-
-      return () => {
-        clearInterval(interval);
       };
+
+      interval = setInterval(() => {
+        void updateProgress();
+      }, 1000);
     }
+
+    return () => {
+      if (interval !== null) {
+        clearInterval(interval);
+      }
+    };
   }, [sound]);
 
   useEffect(() => {
-    const animationFunction = () => {
+    const animationFunction = (): void => {
       Animated.spring(translateY, {
         toValue: isMediaPlayerVisible ? 0 : 100,
         useNativeDriver: true,
       }).start();
     };
     animationFunction();
-  }, [isMediaPlayerVisible]);
+  }, [isMediaPlayerVisible, translateY]);
 
   /**
    * Updates the MediaPlayer visibility state.
    *
    * @param {boolean} isVisible - The visibility state of the MediaPlayer.
    */
-  const handleMediaPlayerVisibility = (isVisible: boolean) => {
+  const handleMediaPlayerVisibility = (isVisible: boolean): void => {
     setIsMediaPlayerVisible(isVisible);
   };
 
@@ -99,11 +117,15 @@ function MediaPlayer({
     const handleAppStateChange = async (
       nextAppState: AppStateStatus
     ): Promise<void> => {
-      if (nextAppState === 'background' && sound !== null) {
-        const status = await sound.getStatusAsync();
-        if ('isPlaying' in status && status.isPlaying) {
-          setIsPlaying(false);
+      try {
+        if (nextAppState === 'background' && sound !== null) {
+          const status = await sound.getStatusAsync();
+          if ('isPlaying' in status && status.isPlaying) {
+            setIsPlaying(false);
+          }
         }
+      } catch (error) {
+        console.error('Error while handling app state change:', error);
       }
     };
 
@@ -113,12 +135,28 @@ function MediaPlayer({
      * @returns {Promise<void>}
      */
     const setAudioMode = async (): Promise<void> => {
-      await Audio.setAudioModeAsync({
-        staysActiveInBackground: true,
-        interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
-        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-        shouldDuckAndroid: false,
-      });
+      try {
+        await Audio.setAudioModeAsync({
+          staysActiveInBackground: true,
+          interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+          interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+          shouldDuckAndroid: false,
+        });
+      } catch (error) {
+        try {
+          await Audio.setAudioModeAsync({
+            staysActiveInBackground: false,
+            interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+            interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+            shouldDuckAndroid: true,
+          });
+        } catch (fallbackError) {
+          console.error(
+            'Error while setting fallback audio mode:',
+            fallbackError
+          );
+        }
+      }
     };
 
     void setAudioMode();
@@ -156,6 +194,7 @@ function MediaPlayer({
             { shouldPlay: true },
             (status) => {
               void (async () => {
+                // Added the void operator before the inner async function
                 if (status.isLoaded && status.isPlaying) {
                   onPreviewLoaded();
                 }
@@ -200,7 +239,7 @@ function MediaPlayer({
         <BlurView intensity={30} style={styles.blurView} tint="light" />
         <View style={styles.content}>
           <View style={styles.songInfo}>
-            {currentSong?.albumArt && (
+            {currentSong?.albumArt !== null && (
               <Image
                 source={{ uri: currentSong.albumArt }}
                 style={styles.image}
@@ -217,7 +256,9 @@ function MediaPlayer({
           </View>
           <TouchableOpacity
             style={styles.playButton}
-            onPress={handlePlayPause}
+            onPress={() => {
+              void handlePlayPause();
+            }}
             testID="play-pause-button"
           >
             <Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}</Text>

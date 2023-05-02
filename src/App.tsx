@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
+import { type Audio } from 'expo-av';
 import SearchBar from './components/SearchBar/SearchBar.tsx';
 import SongList from './components/SongList/SongList.tsx';
 import AppStyles from './styles/AppStyles.ts';
 import type Song from './types/Song.ts';
 import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
-
 /**
  * Parses a raw song object returned from the iTunes API into a Song type.
  *
@@ -48,8 +48,8 @@ async function fetchDefaultSongs(page: number): Promise<Song[]> {
     const data = await response.json();
     return data.results.map(parseSong);
   } catch (error) {
-    // Propagate the error to the caller by rejecting the Promise
-    return Promise.reject(error);
+    console.error('Error fetching data from iTunes API:', error);
+    throw error;
   }
 }
 
@@ -67,16 +67,18 @@ export default function App(): JSX.Element {
     null
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const loadDefaultSongs = async (): Promise<void> => {
-      const defaultSongs = await fetchDefaultSongs();
-      setSongs(defaultSongs);
+      try {
+        const defaultSongs = await fetchDefaultSongs(currentPage);
+        setSongs(defaultSongs);
+      } catch (error) {
+        console.error('Error loading default songs:', error);
+      }
     };
-    const loadData = async (): Promise<void> => {
-      await loadDefaultSongs();
-    };
-    void loadData();
+    void loadDefaultSongs();
   }, []);
 
   /**
@@ -85,16 +87,23 @@ export default function App(): JSX.Element {
    * @param {string} searchQuery - The search query.
    * @returns {Promise<void>}
    */
-  const handleSearch = async (searchQuery: string): Promise<void> => {
+  const handleSearch = async (newSearchQuery: string): Promise<void> => {
+    setSearchQuery(newSearchQuery);
     try {
-      if (searchQuery.trim() === '') {
-        const defaultSongs = await fetchDefaultSongs(currentPage);
+      if (newSearchQuery.trim() === '') {
+        setSearchQuery('');
+        setCurrentPage(1);
+        const defaultSongs = await fetchDefaultSongs(1);
         setSongs(defaultSongs);
         return;
       }
 
+      setSongs([]);
+
       const response = await fetch(
-        `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song`
+        `https://itunes.apple.com/search?term=${encodeURIComponent(
+          newSearchQuery
+        )}&media=music&entity=song&attribute=artistTerm&limit=25`
       );
 
       if (response.ok) {
@@ -130,27 +139,6 @@ export default function App(): JSX.Element {
       }
     } else if (currentSong !== null && !isPlaying) {
       setIsPlaying(true);
-      onSongPress(currentSong, () => {
-        setIsLoading(false);
-      });
-    }
-  };
-
-  /**
-   * Handles the song selection and updates the state accordingly.
-   *
-   * @param {Song} song - The selected song.
-   * @param {() => void} onLoadComplete - A callback function to be executed when the song is loaded.
-   * @returns {void}
-   */
-
-  const handleSongPress = (song: Song, onLoadComplete: () => void): void => {
-    if (currentSong !== null && currentSong.id === song.id) {
-      restartSong();
-    } else {
-      setCurrentSong(song);
-      setIsPlaying(true);
-      onLoadComplete();
     }
   };
 
@@ -169,15 +157,66 @@ export default function App(): JSX.Element {
   };
 
   /**
+   * Handles the song selection and updates the state accordingly.
+   *
+   * @param {Song} song - The selected song.
+   * @param {() => void} onLoadComplete - A callback function to be executed
+   * when the song is loaded.
+   * @returns {void}
+   */
+  const handleSongPress = async (
+    song: Song,
+    onLoadComplete: () => void
+  ): Promise<void> => {
+    if (currentSong !== null && currentSong.id === song.id) {
+      await restartSong();
+    } else {
+      setCurrentSong(song);
+      setIsPlaying(true);
+      onLoadComplete();
+    }
+  };
+
+  /**
    * Loads more songs from the API and appends them to the current list.
    *
    * @returns {Promise<void>}
    */
 
   const loadMoreSongs = async (): Promise<void> => {
-    setCurrentPage(currentPage + 1);
-    const newSongs = await fetchDefaultSongs(currentPage + 1);
-    setSongs([...songs, ...newSongs]);
+    try {
+      if (searchQuery.trim() === '') {
+        setCurrentPage((prevPage) => prevPage + 1);
+        const defaultSongs = await fetchDefaultSongs(currentPage + 1);
+        setSongs((prevSongs) => [...prevSongs, ...defaultSongs]);
+        return;
+      }
+
+      const response = await fetch(
+        `https://itunes.apple.com/search?term=${encodeURIComponent(
+          searchQuery
+        )}&media=music&entity=song&attribute=artistTerm&limit=25&offset=${
+          songs.length
+        }`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedSongs = data.results.map(parseSong);
+
+        if (fetchedSongs.length > 0) {
+          setSongs((prevSongs) => [...prevSongs, ...fetchedSongs]);
+        } else {
+          console.log('No more songs to load');
+        }
+      } else {
+        throw new Error(
+          `Error fetching data from iTunes API: ${response.statusText}`
+        );
+      }
+    } catch (error) {
+      console.error('Error occurred while loading more songs:', error);
+    }
   };
 
   return (
@@ -192,17 +231,15 @@ export default function App(): JSX.Element {
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
           isLoading={isLoading}
-          setIsLoading={setIsLoading}
-          loadMoreSongs={loadMoreSongs}
+          loadMoreSongs={async () => {
+            await loadMoreSongs();
+          }}
         />
         <MediaPlayer
           currentSong={currentSong}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
           setIsLoading={setIsLoading}
-          onSongPress={handleSongPress}
-          restartSong={restartSong}
-          soundObject={soundObject}
           setSoundObject={setSoundObject}
           handlePlayPause={handlePlayPause}
         />
