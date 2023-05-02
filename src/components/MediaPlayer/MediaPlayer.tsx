@@ -53,38 +53,51 @@ function MediaPlayer({
   const translateY = useRef(new Animated.Value(100)).current;
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
     if (sound !== null) {
-      const interval = setInterval(async () => {
+      const updateProgress = async (): Promise<void> => {
         const status = await sound.getStatusAsync();
-        if (status.isLoaded && status.durationMillis > 0) {
-          setProgress(status.positionMillis / status.durationMillis);
+        if (status.isLoaded) {
+          const duration = status.durationMillis ?? 0;
+          if (duration > 0) {
+            setProgress(status.positionMillis / duration);
+          } else {
+            setProgress(0);
+          }
         } else {
           setProgress(0);
         }
-      }, 1000);
-
-      return () => {
-        clearInterval(interval);
       };
+
+      interval = setInterval(() => {
+        void updateProgress();
+      }, 1000);
     }
+
+    return () => {
+      if (interval !== null) {
+        clearInterval(interval);
+      }
+    };
   }, [sound]);
 
   useEffect(() => {
-    const animationFunction = () => {
+    const animationFunction = (): void => {
       Animated.spring(translateY, {
         toValue: isMediaPlayerVisible ? 0 : 100,
         useNativeDriver: true,
       }).start();
     };
     animationFunction();
-  }, [isMediaPlayerVisible]);
+  }, [isMediaPlayerVisible, translateY]);
 
   /**
    * Updates the MediaPlayer visibility state.
    *
    * @param {boolean} isVisible - The visibility state of the MediaPlayer.
    */
-  const handleMediaPlayerVisibility = (isVisible: boolean) => {
+  const handleMediaPlayerVisibility = (isVisible: boolean): void => {
     setIsMediaPlayerVisible(isVisible);
   };
 
@@ -156,6 +169,7 @@ function MediaPlayer({
             { shouldPlay: true },
             (status) => {
               void (async () => {
+                // Added the void operator before the inner async function
                 if (status.isLoaded && status.isPlaying) {
                   onPreviewLoaded();
                 }
@@ -200,7 +214,7 @@ function MediaPlayer({
         <BlurView intensity={30} style={styles.blurView} tint="light" />
         <View style={styles.content}>
           <View style={styles.songInfo}>
-            {currentSong?.albumArt && (
+            {currentSong?.albumArt !== null && (
               <Image
                 source={{ uri: currentSong.albumArt }}
                 style={styles.image}
@@ -217,7 +231,9 @@ function MediaPlayer({
           </View>
           <TouchableOpacity
             style={styles.playButton}
-            onPress={handlePlayPause}
+            onPress={() => {
+              void handlePlayPause();
+            }}
             testID="play-pause-button"
           >
             <Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}</Text>

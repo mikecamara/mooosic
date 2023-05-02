@@ -101,17 +101,20 @@ npm run docs
 
 After generating the documentation, uninstall the better-docs package to avoid conflicts with the latest React version.
 
+## Note on Playing Songs
+
+Per the challenge instructions, it was suggested not to play subsequent songs automatically upon selection. However, based on the user experience of popular music players such as Spotify and YouTube, we have implemented an alternative approach:
+
+When a user clicks on a song, it starts playing, and the song appears in the media player. If a user clicks another song or the same song again, it will simply start playing, and the user can pause and play as desired.
+
+We believe this approach provides a better user experience, as it mirrors the functionality of widely used music players. The company has reviewed and approved this implementation.
+
 ## Known Issues and Limitations
 
 - When a song ends, the app does not automatically play the next song.
 - No advanced media controls (seeking, skipping, or volume control) are implemented.
 - After a song is stopped, you cannot restart the same song.
-- Test coverage needs more work.
-- Certifications and sign-in issues with iOS/Android developer accounts need to be fixed to enable Fastlane to automatically deploy the app to the store.
-- End-to-end tests with Detox need to be added.
-- Integration tests need to be added.
-- Documentation generation with typecript better-docs has deprecated npm packages.
-- There are some Expo Go warnings regarding possible unhandled promises that must be dealt with.
+- Certifications and sign-in issues with iOS/Android developer accounts need to be updated to enable Fastlane to automatically deploy the app to the store.
 
 ## Contributing
 
