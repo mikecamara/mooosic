@@ -203,7 +203,12 @@ export default function App(): JSX.Element {
       if (response.ok) {
         const data = await response.json();
         const fetchedSongs = data.results.map(parseSong);
-        setSongs((prevSongs) => [...prevSongs, ...fetchedSongs]);
+
+        if (fetchedSongs.length > 0) {
+          setSongs((prevSongs) => [...prevSongs, ...fetchedSongs]);
+        } else {
+          console.log('No more songs to load');
+        }
       } else {
         throw new Error(
           `Error fetching data from iTunes API: ${response.statusText}`

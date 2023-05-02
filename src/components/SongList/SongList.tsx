@@ -45,20 +45,20 @@ function SongList({
       if (isPlaying) {
         setIsPlaying(false);
         setTimeout(() => {
-          onSongPress(song, () => {
+          void onSongPress(song, () => {
             setLoadingSongId(null);
           });
         }, 100);
       } else {
         setIsPlaying(true);
-        onSongPress(song, () => {
+        void onSongPress(song, () => {
           setLoadingSongId(null);
         });
       }
     } else {
       setCurrentSong(song);
       setIsPlaying(true);
-      onSongPress(song, () => {
+      void onSongPress(song, () => {
         setLoadingSongId(null);
       });
     }
@@ -144,6 +144,7 @@ function SongList({
           renderItem={renderItem}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           keyboardShouldPersistTaps="always"
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onEndReached={async () => {
             if (!isLoading) {
               await loadMoreSongs();
