@@ -145,7 +145,9 @@ function SongList({
           keyExtractor={(item, index) => `${item.id}-${index}`}
           keyboardShouldPersistTaps="always"
           onEndReached={async () => {
-            await loadMoreSongs();
+            if (!isLoading) {
+              await loadMoreSongs();
+            }
           }}
           onEndReachedThreshold={0.5}
         />

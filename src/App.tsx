@@ -67,6 +67,7 @@ export default function App(): JSX.Element {
     null
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const loadDefaultSongs = async (): Promise<void> => {
@@ -86,16 +87,23 @@ export default function App(): JSX.Element {
    * @param {string} searchQuery - The search query.
    * @returns {Promise<void>}
    */
-  const handleSearch = async (searchQuery: string): Promise<void> => {
+  const handleSearch = async (newSearchQuery: string): Promise<void> => {
+    setSearchQuery(newSearchQuery);
     try {
-      if (searchQuery.trim() === '') {
-        const defaultSongs = await fetchDefaultSongs(currentPage);
+      if (newSearchQuery.trim() === '') {
+        setSearchQuery('');
+        setCurrentPage(1);
+        const defaultSongs = await fetchDefaultSongs(1);
         setSongs(defaultSongs);
         return;
       }
 
+      setSongs([]);
+
       const response = await fetch(
-        `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song`
+        `https://itunes.apple.com/search?term=${encodeURIComponent(
+          newSearchQuery
+        )}&media=music&entity=song&attribute=artistTerm&limit=25`
       );
 
       if (response.ok) {
@@ -175,14 +183,34 @@ export default function App(): JSX.Element {
    * @returns {Promise<void>}
    */
 
-  const loadMoreSongs = (): void => {
+  const loadMoreSongs = async (): Promise<void> => {
     try {
-      setCurrentPage(currentPage + 1);
-      void fetchDefaultSongs(currentPage + 1).then((newSongs) => {
-        setSongs([...songs, ...newSongs]);
-      });
+      if (searchQuery.trim() === '') {
+        setCurrentPage((prevPage) => prevPage + 1);
+        const defaultSongs = await fetchDefaultSongs(currentPage + 1);
+        setSongs((prevSongs) => [...prevSongs, ...defaultSongs]);
+        return;
+      }
+
+      const response = await fetch(
+        `https://itunes.apple.com/search?term=${encodeURIComponent(
+          searchQuery
+        )}&media=music&entity=song&attribute=artistTerm&limit=25&offset=${
+          songs.length
+        }`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedSongs = data.results.map(parseSong);
+        setSongs((prevSongs) => [...prevSongs, ...fetchedSongs]);
+      } else {
+        throw new Error(
+          `Error fetching data from iTunes API: ${response.statusText}`
+        );
+      }
     } catch (error) {
-      console.error('Error loading more songs:', error);
+      console.error('Error occurred while loading more songs:', error);
     }
   };
 
@@ -198,7 +226,9 @@ export default function App(): JSX.Element {
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
           isLoading={isLoading}
-          loadMoreSongs={loadMoreSongs}
+          loadMoreSongs={async () => {
+            await loadMoreSongs();
+          }}
         />
         <MediaPlayer
           currentSong={currentSong}
