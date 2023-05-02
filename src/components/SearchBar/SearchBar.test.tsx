@@ -6,13 +6,17 @@ import SearchBar from './SearchBar.tsx';
 
 describe('SearchBar', () => {
   test('renders correctly', () => {
-    const { getByPlaceholderText } = render(<SearchBar onSearch={() => {}} />);
+    const { getByPlaceholderText } = render(
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      <SearchBar onSearch={async () => {}} />
+    );
     expect(getByPlaceholderText('Search for an artist')).toBeTruthy();
   });
 
   test('displays entered text', () => {
     const { getByPlaceholderText, getByDisplayValue } = render(
-      <SearchBar onSearch={(searchQuery: string) => {}} />
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      <SearchBar onSearch={async () => {}} />
     );
     fireEvent.changeText(getByPlaceholderText('Search for an artist'), 'test');
     expect(getByDisplayValue('test')).toBeTruthy();

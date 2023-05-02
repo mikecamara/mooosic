@@ -18,7 +18,7 @@ jest.mock('expo-av', () => {
   const InterruptionModeAndroid = {
     DuckOthers: 'InterruptionModeAndroid.DuckOthers',
   };
-  const unloadAsyncMock = jest.fn(); // Move the declaration inside the mock implementation
+  const unloadAsyncMock = jest.fn();
   const Audio = {
     setAudioModeAsync: jest.fn(
       async () =>

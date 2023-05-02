@@ -44,14 +44,9 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
-    "no-unused-vars": [
-      "error",
-      { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }
-    ],
     "no-debugger": "error",
     "max-len": ["error", { "code": 80, "tabWidth": 2, "ignoreUrls": true }],
     "no-trailing-spaces": "error",
-    "no-inline-comments": "error",
     "object-curly-spacing": ["error", "always"],
     "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
     "camelcase": "error",
@@ -61,7 +56,15 @@
     "react/jsx-uses-vars": "error",
     "react/jsx-uses-react": "error",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-console": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-inline-comments": "off",
+    "no-return-await": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
   }
 }
