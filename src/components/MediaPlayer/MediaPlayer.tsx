@@ -47,7 +47,7 @@ function MediaPlayer(): JSX.Element | null {
 
       interval = setInterval(() => {
         void updateProgress();
-      }, 1000); // Update the interval duration as per your requirement
+      }, 1000);
     }
 
     return () => {
@@ -86,7 +86,6 @@ function MediaPlayer(): JSX.Element | null {
     if (url !== null && url !== '') {
       try {
         if (state.sound !== null) {
-          // Pause and unload the previous song's media player
           await state.sound.pauseAsync();
           await state.sound.unloadAsync();
           dispatch({ type: 'setSoundObject', payload: null });

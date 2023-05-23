@@ -85,7 +85,6 @@ function SongList(): JSX.Element {
       });
       dispatch({ type: 'setCurrentPage', payload: nextPage });
     } else {
-      // Fetch more songs matching the search query
       const songsLength = state.songs.length;
       try {
         const fetchedSongs = await loadMoreSongsService(

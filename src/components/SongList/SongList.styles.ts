@@ -1,4 +1,3 @@
-// export default styles;
 import { StyleSheet } from 'react-native';
 
 const colors = {

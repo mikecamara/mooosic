@@ -9,7 +9,7 @@ export interface SongState {
   soundObject: Audio.SoundObject | null;
   currentPage: number;
   searchQuery: string;
-  sound: Audio.Sound | null; // Added this
-  isMediaPlayerVisible: boolean; // Added this
-  progress: number; // Added this
+  sound: Audio.Sound | null;
+  isMediaPlayerVisible: boolean;
+  progress: number;
 }
