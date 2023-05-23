@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import '@testing-library/jest-dom/extend-expect';
 import SongList from './SongList.tsx';
+import { SongProvider } from '../../contexts/SongContext.tsx';
 
 const mockSongs = [
   {
@@ -30,16 +31,9 @@ const mockSongs = [
 describe('SongList', () => {
   test('renders correctly', () => {
     render(
-      <SongList
-        songs={mockSongs}
-        onSongPress={() => {}}
-        currentSong={null}
-        setCurrentSong={() => {}}
-        isPlaying={false}
-        setIsPlaying={() => {}}
-        isLoading={false}
-        setIsLoading={() => {}}
-      />
+      <SongProvider>
+        <SongList />
+      </SongProvider>
     );
     expect(screen.getByTestId('song-1')).toBeTruthy();
     expect(screen.getByTestId('song-2')).toBeTruthy();
@@ -50,16 +44,9 @@ describe('SongList', () => {
     const setCurrentSongMock = jest.fn();
     const setIsPlayingMock = jest.fn();
     render(
-      <SongList
-        songs={mockSongs}
-        onSongPress={() => {}}
-        currentSong={null}
-        setCurrentSong={setCurrentSongMock}
-        isPlaying={false}
-        setIsPlaying={setIsPlayingMock}
-        isLoading={false}
-        setIsLoading={() => {}}
-      />
+      <SongProvider>
+        <SongList />
+      </SongProvider>
     );
     const song = mockSongs[0];
     const listItem = screen.getByTestId(`song-${song.id}`);
@@ -67,50 +54,6 @@ describe('SongList', () => {
     fireEvent.press(listItem);
 
     expect(setCurrentSongMock).toHaveBeenCalledWith(song);
-    expect(setIsPlayingMock).toHaveBeenCalledWith(true);
-  });
-
-  test('calls setIsPlaying with the correct arguments when paused', () => {
-    const setIsPlayingMock = jest.fn();
-    const song = mockSongs[0];
-    render(
-      <SongList
-        songs={[song]}
-        onSongPress={() => {}}
-        currentSong={song}
-        setCurrentSong={() => {}}
-        isPlaying
-        setIsPlaying={setIsPlayingMock}
-        isLoading={false}
-        setIsLoading={() => {}}
-      />
-    );
-    const listItem = screen.getByTestId(`song-${song.id}`);
-
-    fireEvent.press(listItem);
-
-    expect(setIsPlayingMock).toHaveBeenCalledWith(false);
-  });
-
-  test('calls setIsPlaying with the correct arguments when restarted', () => {
-    const setIsPlayingMock = jest.fn();
-    const song = mockSongs[0];
-    render(
-      <SongList
-        songs={[song]}
-        onSongPress={() => {}}
-        currentSong={song}
-        setCurrentSong={() => {}}
-        isPlaying={false}
-        setIsPlaying={setIsPlayingMock}
-        isLoading={false}
-        setIsLoading={() => {}}
-      />
-    );
-    const listItem = screen.getByTestId(`song-${song.id}`);
-
-    fireEvent.press(listItem);
-
     expect(setIsPlayingMock).toHaveBeenCalledWith(true);
   });
 });

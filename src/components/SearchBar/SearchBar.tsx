@@ -1,29 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { TextInput, View } from 'react-native';
 import styles from './SearchBar.styles.ts';
+import { SongContext } from '../../contexts/SongContext.tsx';
+import {
+  fetchSongsFromAPI,
+  fetchDefaultSongs,
+} from '../../services/ITunesApi.ts';
 
-interface SearchBarProps {
-  onSearch: (searchQuery: string) => Promise<void>;
-}
+function SearchBar(): JSX.Element {
+  const [input, setInput] = useState('');
+  const { state, dispatch } = useContext(SongContext);
 
-function SearchBar({ onSearch }: SearchBarProps): JSX.Element {
-  const [searchQuery, setSearchQuery] = useState('');
+  const handleSearch = async (): Promise<void> => {
+    dispatch({ type: 'setSearchQuery', payload: input });
+    try {
+      if (input.trim() === '') {
+        dispatch({ type: 'setSearchQuery', payload: '' });
+        dispatch({ type: 'setCurrentPage', payload: 1 });
+        const defaultSongs = await fetchDefaultSongs(1);
+        dispatch({ type: 'setSongs', payload: defaultSongs });
+        return;
+      }
 
-  const handleTextChange = (text: string): void => {
-    setSearchQuery(text);
-    void onSearch(text);
+      dispatch({ type: 'setSongs', payload: [] });
+
+      const fetchedSongs = await fetchSongsFromAPI(input);
+      dispatch({ type: 'setSongs', payload: fetchedSongs });
+    } catch (error) {
+      console.error('Error occurred while searching:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        onChangeText={(text: string) => {
-          handleTextChange(text);
+        value={input}
+        onChangeText={setInput}
+        onSubmitEditing={() => {
+          void handleSearch();
         }}
-        value={searchQuery}
-        placeholder="Search for an artist"
-        testID="search-input"
+        placeholder="Search artist"
+        placeholderTextColor="white"
       />
     </View>
   );

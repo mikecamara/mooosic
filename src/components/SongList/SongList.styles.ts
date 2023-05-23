@@ -1,59 +1,3 @@
-// import { StyleSheet } from 'react-native';
-// import colors from '../../utils/colors.ts';
-
-// const { GRAY_COLOR } = colors;
-
-// const styles = StyleSheet.create({
-//   centered: {
-//     alignItems: 'center',
-//     flex: 1,
-//     justifyContent: 'center',
-//   },
-//   container: {
-//     flex: 1,
-//   },
-//   image: {
-//     height: 50,
-//     width: 50,
-//   },
-//   listItem: {
-//     alignItems: 'center',
-//     borderBottomColor: GRAY_COLOR,
-//     borderBottomWidth: 1,
-//     flexDirection: 'row',
-//     padding: 10,
-//   },
-//   listItemAlbum: {
-//     fontSize: 12,
-//   },
-//   listItemArtist: {
-//     fontSize: 14,
-//   },
-//   listItemText: {
-//     flex: 1,
-//     marginLeft: 10,
-//   },
-//   listItemTitle: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//   },
-//   noResults: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//   },
-//   selectedItem: {
-//     backgroundColor: GRAY_COLOR,
-//   },
-//   speakerContainer: {
-//     borderBottomWidth: 0,
-//   },
-//   speakerIcon: {
-//     fontSize: 20,
-//     marginLeft: 10,
-//   },
-// });
-
 // export default styles;
 import { StyleSheet } from 'react-native';
 
@@ -69,13 +13,17 @@ const colors = {
 const SPEAKER_WIDTH = 50;
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center',
+    resizeMode: 'cover',
+  },
   centered: {
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
   },
   container: {
-    backgroundColor: colors.darkGray,
     flex: 1,
   },
   image: {
@@ -83,9 +31,14 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
   },
+  listContainer: {
+    flex: 1,
+    width: '100%',
+  },
+  // eslint-disable-next-line react-native/no-color-literals
   listItem: {
     alignItems: 'center',
-    backgroundColor: colors.lighterGray,
+    backgroundColor: 'rgba(90, 90, 90, 0.8)',
     borderRadius: 10,
     flexDirection: 'row',
     marginBottom: 10,

@@ -1,83 +1,53 @@
 import { BlurView } from 'expo-blur';
-import React, { useState, useEffect, useRef } from 'react';
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
-import {
-  AppState,
-  type AppStateStatus,
-  Image,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import { Animated } from 'react-native';
-import type Song from '../../types/Song.ts';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Image, Text, TouchableOpacity, View, Animated } from 'react-native';
+import { Audio } from 'expo-av';
 import styles from './MediaPlayer.styles.ts';
 import { truncateTitle } from './MediaPlayer.utils.ts';
+import { SongContext } from '../../contexts/SongContext.tsx';
 
-interface MediaPlayerProps {
-  currentSong: Song | null;
-  isPlaying: boolean;
-  setIsPlaying: (isPlaying: boolean) => void;
-  setIsLoading: (isLoading: boolean) => void;
-  setSoundObject: (soundObject: Audio.SoundObject | null) => void;
-  handlePlayPause: () => Promise<void>;
-}
-
-/**
- * MediaPlayer component that handles audio playback, display
- * of song information, and user interactions.
- *
- * @param {MediaPlayerProps} {
- *   currentSong,
- *   isPlaying,
- *   setIsPlaying,
- *   setIsLoading,
- *   setSoundObject,
- *   handlePlayPause,
- * } - The MediaPlayer component properties.
- * @returns {JSX.Element | null} - The rendered MediaPlayer
- * component or null if the currentSong is null.
- */
-function MediaPlayer({
-  currentSong,
-  isPlaying,
-  setIsPlaying,
-  setIsLoading,
-  setSoundObject,
-  handlePlayPause,
-}: MediaPlayerProps): JSX.Element | null {
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isMediaPlayerVisible, setIsMediaPlayerVisible] = useState(false);
-  const [progress, setProgress] = useState<number>(0);
+function MediaPlayer(): JSX.Element | null {
+  const { state, dispatch } = useContext(SongContext);
 
   const translateY = useRef(new Animated.Value(100)).current;
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (sound !== null) {
+    if (state.soundObject?.sound !== null) {
       const updateProgress = async (): Promise<void> => {
         try {
-          const status = await sound.getStatusAsync();
-          if (status.isLoaded) {
-            const duration = status.durationMillis ?? 0;
-            if (duration > 0) {
-              setProgress(status.positionMillis / duration);
+          if (state.soundObject?.sound !== null) {
+            const status = await state.soundObject?.sound.getStatusAsync();
+            if (status !== undefined) {
+              if ('isLoaded' in status && status.isLoaded) {
+                const duration = status.durationMillis ?? 0;
+                if (duration > 0) {
+                  dispatch({
+                    type: 'setProgress',
+                    payload: status.positionMillis / duration,
+                  });
+                } else {
+                  dispatch({ type: 'setProgress', payload: 0 });
+                }
+              } else {
+                dispatch({ type: 'setProgress', payload: 0 });
+              }
             } else {
-              setProgress(0);
+              dispatch({ type: 'setProgress', payload: 0 });
             }
           } else {
-            setProgress(0);
+            dispatch({ type: 'setProgress', payload: 0 });
           }
         } catch (error) {
           console.error('Error while updating progress:', error);
-          setProgress(0);
+          dispatch({ type: 'setProgress', payload: 0 });
         }
       };
 
       interval = setInterval(() => {
         void updateProgress();
-      }, 1000);
+      }, 1000); // Update the interval duration as per your requirement
     }
 
     return () => {
@@ -85,131 +55,71 @@ function MediaPlayer({
         clearInterval(interval);
       }
     };
-  }, [sound]);
+  }, [state.soundObject, dispatch]);
 
   useEffect(() => {
     const animationFunction = (): void => {
       Animated.spring(translateY, {
-        toValue: isMediaPlayerVisible ? 0 : 100,
+        toValue: state.isMediaPlayerVisible ? 0 : 100,
         useNativeDriver: true,
       }).start();
     };
     animationFunction();
-  }, [isMediaPlayerVisible, translateY]);
+  }, [state.isMediaPlayerVisible, translateY]);
 
-  /**
-   * Updates the MediaPlayer visibility state.
-   *
-   * @param {boolean} isVisible - The visibility state of the MediaPlayer.
-   */
-  const handleMediaPlayerVisibility = (isVisible: boolean): void => {
-    setIsMediaPlayerVisible(isVisible);
+  const handlePlayPause = async (): Promise<void> => {
+    if (state.isPlaying) {
+      if (state.soundObject?.sound !== null) {
+        await state.soundObject?.sound.pauseAsync();
+        dispatch({ type: 'setIsPlaying', payload: false });
+      }
+    } else if (state.soundObject?.sound !== null) {
+      await state.soundObject?.sound.playAsync();
+      dispatch({ type: 'setIsPlaying', payload: true });
+    }
   };
 
-  /**
-   * Handles app state changes and adjusts audio playback accordingly.
-   *
-   * @param {AppStateStatus} nextAppState - The next app
-   * state after a change occurs.
-   * @returns {Promise<void>}
-   */
-  useEffect(() => {
-    const handleAppStateChange = async (
-      nextAppState: AppStateStatus
-    ): Promise<void> => {
-      try {
-        if (nextAppState === 'background' && sound !== null) {
-          const status = await sound.getStatusAsync();
-          if ('isPlaying' in status && status.isPlaying) {
-            setIsPlaying(false);
-          }
-        }
-      } catch (error) {
-        console.error('Error while handling app state change:', error);
-      }
-    };
-
-    /**
-     * Sets the audio mode for the app.
-     *
-     * @returns {Promise<void>}
-     */
-    const setAudioMode = async (): Promise<void> => {
-      try {
-        await Audio.setAudioModeAsync({
-          staysActiveInBackground: true,
-          interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
-          interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-          shouldDuckAndroid: false,
-        });
-      } catch (error) {
-        try {
-          await Audio.setAudioModeAsync({
-            staysActiveInBackground: false,
-            interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-            interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-            shouldDuckAndroid: true,
-          });
-        } catch (fallbackError) {
-          console.error(
-            'Error while setting fallback audio mode:',
-            fallbackError
-          );
-        }
-      }
-    };
-
-    void setAudioMode();
-
-    const appStateSubscription = AppState.addEventListener(
-      'change',
-      // eslint-disable-next-line no-void
-      (nextAppState: AppStateStatus) => void handleAppStateChange(nextAppState)
-    );
-
-    return () => {
-      appStateSubscription.remove();
-      void sound?.unloadAsync();
-    };
-  }, [sound]);
-
-  /**
-   * Loads and plays the preview of the current song.
-   *
-   * @param {string} url - The URL of the song preview.
-   * @param {() => void} onPreviewLoaded - A callback function
-   * to be executed when the preview is loaded.
-   * @returns {Promise<void>}
-   */
   const loadAndPlayPreview = async (
     url: string,
     onPreviewLoaded: () => void
   ): Promise<void> => {
-    handleMediaPlayerVisibility(true);
     if (url !== null && url !== '') {
       try {
+        if (state.sound !== null) {
+          // Pause and unload the previous song's media player
+          await state.sound.pauseAsync();
+          await state.sound.unloadAsync();
+          dispatch({ type: 'setSoundObject', payload: null });
+        }
+
         const { sound: newSound, status: newStatus } =
           await Audio.Sound.createAsync(
             { uri: url },
             { shouldPlay: true },
             (status) => {
-              void (async () => {
-                // Added the void operator before the inner async function
-                if (status.isLoaded && status.isPlaying) {
-                  onPreviewLoaded();
-                }
+              if (status.isLoaded && status.isPlaying) {
+                onPreviewLoaded();
+              }
 
-                if (status.isLoaded && status.didJustFinish) {
-                  setIsPlaying(false);
-                  await newSound.unloadAsync();
-                  setSoundObject(null);
-                }
-              })();
+              if (status.isLoaded && status.didJustFinish) {
+                dispatch({ type: 'setIsPlaying', payload: false });
+                void newSound.unloadAsync();
+                dispatch({ type: 'setSoundObject', payload: null });
+              }
             }
           );
+
         await newSound.playAsync();
-        setSound(newSound);
-        setSoundObject({ sound: newSound, status: newStatus });
+        dispatch({ type: 'setIsPlaying', payload: true });
+        dispatch({
+          type: 'setSoundObject',
+          payload: { sound: newSound, status: newStatus },
+        });
+        dispatch({
+          type: 'setCurrentSong',
+          payload: state.currentSong,
+          isMediaPlayerVisible: true,
+        });
       } catch (error) {
         console.error('Error while playing audio:', error);
       }
@@ -217,14 +127,15 @@ function MediaPlayer({
   };
 
   useEffect(() => {
-    if (isPlaying && currentSong !== null) {
-      void loadAndPlayPreview(currentSong.previewUrl, () => {
-        setIsLoading(false);
-      });
+    if (state.isPlaying && state.currentSong !== null) {
+      const onPreviewLoaded = (): void => {
+        dispatch({ type: 'setIsLoading', payload: false });
+      };
+      void loadAndPlayPreview(state.currentSong.previewUrl, onPreviewLoaded);
     }
-  }, [currentSong]);
+  }, [state.currentSong]);
 
-  if (currentSong === null) {
+  if (state.currentSong === null) {
     return null;
   }
 
@@ -234,23 +145,25 @@ function MediaPlayer({
     >
       <View style={styles.container}>
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
+          <View
+            style={[styles.progressBar, { width: `${state.progress * 100}%` }]}
+          />
         </View>
         <BlurView intensity={30} style={styles.blurView} tint="light" />
         <View style={styles.content}>
           <View style={styles.songInfo}>
-            {currentSong?.albumArt !== null && (
+            {state.currentSong?.albumArt !== null && (
               <Image
-                source={{ uri: currentSong.albumArt }}
+                source={{ uri: state.currentSong.albumArt }}
                 style={styles.image}
               />
             )}
             <View>
               <Text style={styles.title}>
-                {truncateTitle(currentSong?.title ?? 'No song selected')}
+                {truncateTitle(state.currentSong?.title ?? 'No song selected')}
               </Text>
               <Text style={styles.artist}>
-                {truncateTitle(currentSong?.artist ?? 'Unknown artist')}
+                {truncateTitle(state.currentSong?.artist ?? 'Unknown artist')}
               </Text>
             </View>
           </View>
@@ -261,7 +174,9 @@ function MediaPlayer({
             }}
             testID="play-pause-button"
           >
-            <Text style={styles.playButtonText}>{isPlaying ? '⏸️' : '▶️'}</Text>
+            <Text style={styles.playButtonText}>
+              {state.isPlaying ? '⏸️' : '▶️'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

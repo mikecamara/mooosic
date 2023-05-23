@@ -1,114 +1,125 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   Image,
+  ImageBackground,
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
+import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
+import {
+  fetchDefaultSongs,
+  fetchSongs,
+  loadMoreSongsService,
+} from '../../services/ITunesApi.ts';
 
-interface SongListProps {
-  songs: Song[];
-  onSongPress: (song: Song, onLoadComplete: () => void) => Promise<void>;
-  currentSong: Song | null;
-  setCurrentSong: (song: Song | null) => void;
-  isPlaying: boolean;
-  setIsPlaying: (isPlaying: boolean) => void;
-  isLoading: boolean;
-  loadMoreSongs: () => Promise<void>;
-}
-
-function SongList({
-  songs,
-  onSongPress,
-  currentSong,
-  setCurrentSong,
-  isPlaying,
-  setIsPlaying,
-  isLoading,
-  loadMoreSongs,
-}: SongListProps): JSX.Element {
+function SongList(): JSX.Element {
+  const { state, dispatch } = useContext(SongContext);
   const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
-  /**
-   * Handles the song press event and updates the relevant states.
-   *
-   * @param {Song} song - The song object that was pressed.
-   */
-  const handleSongPress = (song: Song): void => {
+
+  useEffect(() => {
+    const loadDefaultSongs = async (): Promise<void> => {
+      try {
+        const defaultSongs = await fetchDefaultSongs(state.currentPage);
+        dispatch({ type: 'setSongs', payload: defaultSongs });
+      } catch (error) {
+        console.error('Error loading default songs:', error);
+      }
+    };
+    void loadDefaultSongs();
+  }, []);
+
+  useEffect(() => {
+    const fetchAndSetSongs = async (): Promise<void> => {
+      try {
+        const songs = await fetchSongs(state.searchQuery);
+        dispatch({ type: 'setSongs', payload: songs });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (state.searchQuery !== '') {
+      void fetchAndSetSongs();
+    }
+  }, [state.searchQuery, dispatch]);
+
+  const handleSongPress = async (song: Song): Promise<void> => {
     Keyboard.dismiss();
 
-    if (currentSong !== null && currentSong.id === song.id) {
-      if (isPlaying) {
-        setIsPlaying(false);
-        setTimeout(() => {
-          void onSongPress(song, () => {
-            setLoadingSongId(null);
-          });
-        }, 100);
-      } else {
-        setIsPlaying(true);
-        void onSongPress(song, () => {
-          setLoadingSongId(null);
-        });
-      }
+    if (state.currentSong !== null && state.currentSong.id === song.id) {
+      dispatch({ type: 'setIsPlaying', payload: !state.isPlaying });
     } else {
-      setCurrentSong(song);
-      setIsPlaying(true);
-      void onSongPress(song, () => {
-        setLoadingSongId(null);
-      });
+      if (state.sound !== null) {
+        void state.sound.pauseAsync();
+        void state.sound.unloadAsync();
+        dispatch({ type: 'setSoundObject', payload: null });
+      }
+      dispatch({ type: 'setCurrentSong', payload: song });
+      dispatch({ type: 'setIsPlaying', payload: true });
     }
   };
 
-  /**
-   * Returns the appropriate speaker icon based on
-   * the loading and playing states.
-   *
-   * @returns {string} - The speaker icon as a string.
-   */
   const getSpeakerIcon = (): string => {
-    if (isLoading) {
+    if (state.isLoading) {
       return '⏳';
     }
-    if (isPlaying) {
+    if (state.isPlaying) {
       return '🔊';
     }
     return '';
   };
+  const loadMoreSongs = async (currentPage: number): Promise<void> => {
+    if (state.searchQuery.trim() === '') {
+      // Fetch default songs with the next page number
+      const nextPage = currentPage + 1;
+      const defaultSongs = await fetchDefaultSongs(nextPage);
+      dispatch({
+        type: 'setSongs',
+        payload: [...state.songs, ...defaultSongs],
+      });
+      dispatch({ type: 'setCurrentPage', payload: nextPage });
+    } else {
+      // Fetch more songs matching the search query
+      const songsLength = state.songs.length;
+      try {
+        const fetchedSongs = await loadMoreSongsService(
+          currentPage,
+          state.searchQuery,
+          songsLength
+        );
+        dispatch({
+          type: 'setSongs',
+          payload: [...state.songs, ...fetchedSongs],
+        });
+        dispatch({ type: 'setCurrentPage', payload: currentPage + 1 });
+      } catch (error) {
+        console.error('Error occurred while loading more songs:', error);
+      }
+    }
+  };
 
-  /**
-   * Converts the provided milliseconds to a minutes and seconds format.
-   *
-   * @param {number} millis - The duration in milliseconds.
-   * @returns {string} - The formatted duration string
-   * in "minutes:seconds" format.
-   */
   const millisToMinutesAndSeconds = (millis: number): string => {
     const minutes = Math.floor(millis / 60000);
     const seconds = Number(((millis % 60000) / 1000).toFixed(0));
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  /**
-   * Renders an individual item within the FlatList.
-   *
-   * @param {{ item: Song }} { item } - The song object to be rendered.
-   * @returns {JSX.Element} - The rendered list item component.
-   */
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
     <TouchableOpacity
       style={[
         styles.listItem,
-        currentSong !== null &&
-          currentSong.id === item.id &&
+        state.currentSong !== null &&
+          state.currentSong.id === item.id &&
           styles.selectedItem,
       ]}
       onPress={() => {
-        handleSongPress(item);
+        void handleSongPress(item);
       }}
       testID={`song-${item.id}`}
     >
@@ -120,7 +131,7 @@ function SongList({
         </Text>
         <Text style={styles.listItemAlbum}>{item.album}</Text>
       </View>
-      {currentSong !== null && currentSong.id === item.id && (
+      {state.currentSong !== null && state.currentSong.id === item.id && (
         <View style={[styles.listItem, styles.speakerContainer]}>
           {loadingSongId === item.id ? (
             <ActivityIndicator size="small" color="#0000ff" />
@@ -133,27 +144,33 @@ function SongList({
   );
 
   return (
-    <View style={styles.container}>
-      {songs.length === 0 ? (
-        <View style={styles.centered}>
-          <Text style={styles.noResults}>No results found.</Text>
+    <ImageBackground
+      // eslint-disable-next-line global-require
+      source={require('../../../assets/background-mooosic.png')}
+      style={styles.backgroundImage}
+    >
+      <View style={styles.container}>
+        <View style={styles.listContainer}>
+          {state.songs.length === 0 ? (
+            <View style={styles.centered}>
+              <Text style={styles.noResults}>No results found.</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={state.songs}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => `${item.id}-${index}`}
+              keyboardShouldPersistTaps="always"
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              onEndReached={async () => {
+                await loadMoreSongs(state.currentPage);
+              }}
+              onEndReachedThreshold={0.5}
+            />
+          )}
         </View>
-      ) : (
-        <FlatList
-          data={songs}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          keyboardShouldPersistTaps="always"
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onEndReached={async () => {
-            if (!isLoading) {
-              await loadMoreSongs();
-            }
-          }}
-          onEndReachedThreshold={0.5}
-        />
-      )}
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
