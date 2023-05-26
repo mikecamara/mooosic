@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,50 +9,53 @@ import {
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
+import { useInfiniteQuery } from 'react-query';
 import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
 import {
   fetchDefaultSongs,
   fetchSongs,
-  loadMoreSongsService,
-} from '../../services/ITunesApi.ts';
+  useDefaultSongs,
+  useSongs,
+} from '../../services/ITunesApi';
+import type ResponseData from '../../types/ResponseData.ts';
 
 function SongList(): JSX.Element {
   const { state, dispatch } = useContext(SongContext);
-  const [loadingSongId, setLoadingSongId] = useState<string | null>(null);
+  const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
+    useInfiniteQuery<ResponseData, Error>(
+      ['songs', state.searchQuery],
+      ({ pageParam = 0 }) =>
+        state.searchQuery
+          ? fetchSongs(state.searchQuery)
+          : fetchDefaultSongs(pageParam + 1),
+      {
+        getNextPageParam: (lastPage, allPages) => {
+          // assuming each page has 25 songs
+          return lastPage && allPages.length * 25 < lastPage.resultCount
+            ? allPages.length + 1
+            : false;
+        },
+      }
+    );
 
   useEffect(() => {
-    const loadDefaultSongs = async (): Promise<void> => {
-      try {
-        const defaultSongs = await fetchDefaultSongs(state.currentPage);
-        dispatch({ type: 'setSongs', payload: defaultSongs });
-      } catch (error) {
-        console.error('Error loading default songs:', error);
-      }
-    };
-    void loadDefaultSongs();
-  }, []);
-
-  useEffect(() => {
-    const fetchAndSetSongs = async (): Promise<void> => {
-      try {
-        const songs = await fetchSongs(state.searchQuery);
-        dispatch({ type: 'setSongs', payload: songs });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    if (state.searchQuery !== '') {
-      void fetchAndSetSongs();
+    if (data) {
+      dispatch({
+        type: 'setSongs',
+        payload: data.pages.flatMap((page) => page.results),
+      });
     }
-  }, [state.searchQuery, dispatch]);
+  }, [data, dispatch]);
 
   const handleSongPress = async (song: Song): Promise<void> => {
     Keyboard.dismiss();
 
-    if (state.currentSong !== null && state.currentSong.id === song.id) {
+    if (
+      state.currentSong !== null &&
+      state.currentSong.trackId === song.trackId
+    ) {
       dispatch({ type: 'setIsPlaying', payload: !state.isPlaying });
     } else {
       if (state.sound !== null) {
@@ -74,34 +77,6 @@ function SongList(): JSX.Element {
     }
     return '';
   };
-  const loadMoreSongs = async (currentPage: number): Promise<void> => {
-    if (state.searchQuery.trim() === '') {
-      // Fetch default songs with the next page number
-      const nextPage = currentPage + 1;
-      const defaultSongs = await fetchDefaultSongs(nextPage);
-      dispatch({
-        type: 'setSongs',
-        payload: [...state.songs, ...defaultSongs],
-      });
-      dispatch({ type: 'setCurrentPage', payload: nextPage });
-    } else {
-      const songsLength = state.songs.length;
-      try {
-        const fetchedSongs = await loadMoreSongsService(
-          currentPage,
-          state.searchQuery,
-          songsLength
-        );
-        dispatch({
-          type: 'setSongs',
-          payload: [...state.songs, ...fetchedSongs],
-        });
-        dispatch({ type: 'setCurrentPage', payload: currentPage + 1 });
-      } catch (error) {
-        console.error('Error occurred while loading more songs:', error);
-      }
-    }
-  };
 
   const millisToMinutesAndSeconds = (millis: number): string => {
     const minutes = Math.floor(millis / 60000);
@@ -114,31 +89,33 @@ function SongList(): JSX.Element {
       style={[
         styles.listItem,
         state.currentSong !== null &&
-          state.currentSong.id === item.id &&
+          state.currentSong.trackId === item.trackId &&
           styles.selectedItem,
       ]}
       onPress={() => {
         void handleSongPress(item);
       }}
-      testID={`song-${item.id}`}
+      testID={`song-${item.trackId}`}
     >
-      <Image style={styles.image} source={{ uri: item.albumArt }} />
+      <Image style={styles.image} source={{ uri: item.artworkUrl100 }} />
       <View style={styles.listItemText}>
-        <Text style={styles.listItemTitle}>{item.title}</Text>
+        <Text style={styles.listItemTitle}>{item.trackName}</Text>
         <Text style={styles.listItemArtist}>
-          {item.artist} - {millisToMinutesAndSeconds(item.trackTimeMillis ?? 0)}
+          {item.artistName} -{' '}
+          {millisToMinutesAndSeconds(item.trackTimeMillis ?? 0)}
         </Text>
-        <Text style={styles.listItemAlbum}>{item.album}</Text>
+        <Text style={styles.listItemAlbum}>{item.collectionName}</Text>
       </View>
-      {state.currentSong !== null && state.currentSong.id === item.id && (
-        <View style={[styles.listItem, styles.speakerContainer]}>
-          {loadingSongId === item.id ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Text style={styles.speakerIcon}>{getSpeakerIcon()}</Text>
-          )}
-        </View>
-      )}
+      {state.currentSong !== null &&
+        state.currentSong.trackId === item.trackId && (
+          <View style={[styles.listItem, styles.speakerContainer]}>
+            {isFetching ? (
+              <ActivityIndicator size="small" color="#0000ff" />
+            ) : (
+              <Text style={styles.speakerIcon}>{getSpeakerIcon()}</Text>
+            )}
+          </View>
+        )}
     </TouchableOpacity>
   );
 
@@ -150,19 +127,18 @@ function SongList(): JSX.Element {
     >
       <View style={styles.container}>
         <View style={styles.listContainer}>
-          {state.songs.length === 0 ? (
+          {isFetching && !data ? (
             <View style={styles.centered}>
-              <Text style={styles.noResults}>No results found.</Text>
+              <ActivityIndicator size="large" />
             </View>
           ) : (
             <FlatList
-              data={state.songs}
+              data={data?.pages.flatMap((page) => page.results)}
               renderItem={renderItem}
-              keyExtractor={(item, index) => `${item.id}-${index}`}
+              keyExtractor={(item, index) => `${item.trackId}-${index}`}
               keyboardShouldPersistTaps="always"
-              // eslint-disable-next-line @typescript-eslint/no-misused-promises
-              onEndReached={async () => {
-                await loadMoreSongs(state.currentPage);
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) fetchNextPage();
               }}
               onEndReachedThreshold={0.5}
             />

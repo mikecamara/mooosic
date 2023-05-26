@@ -1,59 +1,69 @@
+import { useQuery } from 'react-query';
 import type Song from '../types/Song';
 import parseSong from '../utils/helpers.ts';
+import type ResponseData from '../types/ResponseData.ts';
 
-/**
- * Utility function to make fetch request and return parsed songs.
- *
- * @param {string} url - The URL for the API request.
- * @returns {Promise<Song[]>} - A promise resolving to an array of songs.
- */
-export const fetchSongsFromAPI = async (url: string): Promise<Song[]> => {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Error fetching data from iTunes API: ${response.statusText}`
+export async function fetchSongsFromAPI(
+  term: string,
+  limit: number = 10
+): Promise<Song[]> {
+  try {
+    const response = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(
+        term
+      )}&entity=song&limit=${limit}`
     );
+    const data: ResponseData = await response.json();
+
+    // map the results to match the Song interface
+    const songs: Song[] = data.results.map((result) => ({
+      trackId: result.trackId.toString(),
+      trackName: result.trackName,
+      artistName: result.artistName,
+      previewUrl: result.previewUrl,
+      trackTimeMillis: result.trackTimeMillis,
+      collectionName: result.collectionName,
+      artworkUrl100: result.artworkUrl100,
+    }));
+
+    return songs;
+  } catch (error) {
+    console.error('Error fetching songs from API:', error);
+    return [];
   }
+}
 
-  const data = await response.json();
-  return data.results.map(parseSong);
-};
-
-export const fetchDefaultSongs = async (page: number): Promise<Song[]> => {
+export async function fetchDefaultSongs(page: number): Promise<ResponseData> {
   const defaultQuery = 'red+hot';
   const url = `https://itunes.apple.com/search?term=${defaultQuery}&media=music&entity=song&limit=25&offset=${
     (page - 1) * 25
   }`;
-  return await fetchSongsFromAPI(url);
-};
 
-export const fetchSongs = async (query: string): Promise<Song[]> => {
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log(data);
+  return data;
+}
+
+export async function fetchSongs(query: string): Promise<ResponseData> {
   const url = `https://itunes.apple.com/search?term=${encodeURIComponent(
     query
   )}&media=music&entity=song&attribute=artistTerm&limit=25`;
-  return await fetchSongsFromAPI(url);
+
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log(data);
+  return data;
+}
+
+export const useDefaultSongs = (page: number) => {
+  return useQuery(['songs', page], () => fetchDefaultSongs(page), {
+    keepPreviousData: true, // for pagination to work correctly
+  });
 };
 
-export const loadMoreSongsService = async (
-  currentPage: number,
-  searchQuery: string,
-  songsLength: number
-): Promise<Song[]> => {
-  if (searchQuery.trim() === '') {
-    return await fetchDefaultSongs(currentPage + 1);
-  }
-
-  const query = '&media=music&entity=song&attribute=artistTerm&limit=25&offset';
-  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(
-    searchQuery
-  )}${query}=${songsLength}`;
-
-  const fetchedSongs = await fetchSongsFromAPI(url);
-
-  if (fetchedSongs.length === 0) {
-    throw new Error('No more songs to load');
-  }
-
-  return fetchedSongs;
+export const useSongs = (query: string) => {
+  return useQuery(['songs', query], () => fetchSongs(query), {
+    enabled: !!query, // only runs when the query isn't empty
+  });
 };

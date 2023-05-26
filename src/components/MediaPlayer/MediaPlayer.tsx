@@ -151,18 +151,22 @@ function MediaPlayer(): JSX.Element | null {
         <BlurView intensity={30} style={styles.blurView} tint="light" />
         <View style={styles.content}>
           <View style={styles.songInfo}>
-            {state.currentSong?.albumArt !== null && (
+            {state.currentSong?.artworkUrl100 !== null && (
               <Image
-                source={{ uri: state.currentSong.albumArt }}
+                source={{ uri: state.currentSong.artworkUrl100 }}
                 style={styles.image}
               />
             )}
             <View>
               <Text style={styles.title}>
-                {truncateTitle(state.currentSong?.title ?? 'No song selected')}
+                {truncateTitle(
+                  state.currentSong?.trackName ?? 'No song selected'
+                )}
               </Text>
               <Text style={styles.artist}>
-                {truncateTitle(state.currentSong?.artist ?? 'Unknown artist')}
+                {truncateTitle(
+                  state.currentSong?.artistName ?? 'Unknown artist'
+                )}
               </Text>
             </View>
           </View>

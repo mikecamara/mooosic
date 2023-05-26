@@ -1,12 +1,12 @@
 import { type ReactNode } from 'react';
 
 interface Song {
-  album?: ReactNode;
-  albumArt?: string | undefined;
-  id: string;
+  collectionName?: ReactNode; // for 'album'
+  artworkUrl100?: string; // for 'albumArt'
+  trackId: string; // for 'id'
   playing?: boolean;
-  title: string;
-  artist?: string;
+  trackName: string; // for 'title'
+  artistName?: string; // for 'artist'
   previewUrl: string;
   trackTimeMillis?: number;
 }

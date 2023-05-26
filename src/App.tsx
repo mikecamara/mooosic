@@ -1,4 +1,5 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { SongProvider } from './contexts/SongContext.tsx';
 import LikedSongs from './components/LikedSongs/LikedSongs.tsx';
 import Settings from './components/Settings/Settings.tsx';
@@ -8,6 +9,9 @@ import MediaPlayerScreen from './components/MediaPlayerScreen/MediaPlayerScreen.
 
 const Tab = createBottomTabNavigator();
 
+// Create a client
+const queryClient = new QueryClient();
+
 /**
  * The main App component.
  *
@@ -15,17 +19,19 @@ const Tab = createBottomTabNavigator();
  */
 function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen
-          name="Media Player"
-          component={MediaPlayerScreen}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen name="Liked Songs" component={LikedSongs} />
-        <Tab.Screen name="Settings" component={Settings} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen
+            name="Media Player"
+            component={MediaPlayerScreen}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen name="Liked Songs" component={LikedSongs} />
+          <Tab.Screen name="Settings" component={Settings} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 

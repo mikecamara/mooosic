@@ -17,14 +17,15 @@ function SearchBar(): JSX.Element {
       if (input.trim() === '') {
         dispatch({ type: 'setSearchQuery', payload: '' });
         dispatch({ type: 'setCurrentPage', payload: 1 });
-        const defaultSongs = await fetchDefaultSongs(1);
+        const defaultSongsResponse = await fetchDefaultSongs(1);
+        const defaultSongs = defaultSongsResponse.results;
         dispatch({ type: 'setSongs', payload: defaultSongs });
         return;
       }
 
       dispatch({ type: 'setSongs', payload: [] });
 
-      const fetchedSongs = await fetchSongsFromAPI(input);
+      const fetchedSongs = await fetchSongsFromAPI(input, 10); // now we are passing a limit parameter
       dispatch({ type: 'setSongs', payload: fetchedSongs });
     } catch (error) {
       console.error('Error occurred while searching:', error);
