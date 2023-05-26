@@ -33,9 +33,7 @@ function SongList(): JSX.Element {
       {
         getNextPageParam: (lastPage, allPages) => {
           // assuming each page has 25 songs
-          return lastPage && allPages.length * 25 < lastPage.resultCount
-            ? allPages.length + 1
-            : false;
+          return lastPage.results.length === 25 ? allPages.length + 1 : false;
         },
       }
     );
