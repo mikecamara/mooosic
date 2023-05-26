@@ -113,7 +113,7 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.mooosic"
+    namespace 'xyz.mikecamara.mooosic'
     defaultConfig {
         applicationId 'xyz.mikecamara.mooosic'
         minSdkVersion rootProject.ext.minSdkVersion
