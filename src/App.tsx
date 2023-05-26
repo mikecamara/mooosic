@@ -1,10 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
 import { SongProvider } from './contexts/SongContext.tsx';
-import SearchBar from './components/SearchBar/SearchBar.tsx';
-import SongList from './components/SongList/SongList.tsx';
-import AppStyles from './styles/AppStyles.ts';
-import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
+import LikedSongs from './components/LikedSongs/LikedSongs.tsx';
+import Settings from './components/Settings/Settings.tsx';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import MediaPlayerScreen from './components/MediaPlayerScreen/MediaPlayerScreen.tsx';
+
+const Tab = createBottomTabNavigator();
 
 /**
  * The main App component.
@@ -13,13 +15,17 @@ import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
  */
 function App(): JSX.Element {
   return (
-    <View style={AppStyles.container}>
-      <View style={AppStyles.mainContent}>
-        <SearchBar />
-        <SongList />
-        <MediaPlayer />
-      </View>
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen
+          name="Media Player"
+          component={MediaPlayerScreen}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen name="Liked Songs" component={LikedSongs} />
+        <Tab.Screen name="Settings" component={Settings} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
