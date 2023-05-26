@@ -41,7 +41,6 @@ export async function fetchDefaultSongs(page: number): Promise<ResponseData> {
 
   const response = await fetch(url);
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
@@ -52,7 +51,6 @@ export async function fetchSongs(query: string): Promise<ResponseData> {
 
   const response = await fetch(url);
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
