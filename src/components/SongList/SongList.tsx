@@ -9,7 +9,8 @@ import {
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
+
 import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
@@ -23,29 +24,28 @@ import type ResponseData from '../../types/ResponseData.ts';
 
 function SongList(): JSX.Element {
   const { state, dispatch } = useContext(SongContext);
+  const queryClient = useQueryClient();
+
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery<ResponseData, Error>(
       ['songs', state.searchQuery],
       ({ pageParam = 0 }) =>
-        state.searchQuery
+        state.searchQuery.trim() !== ''
           ? fetchSongs(state.searchQuery)
           : fetchDefaultSongs(pageParam + 1),
       {
         getNextPageParam: (lastPage, allPages) => {
-          // assuming each page has 25 songs
           return lastPage.results.length === 25 ? allPages.length + 1 : false;
         },
+        staleTime: 1000 * 60 * 5,
       }
     );
 
   useEffect(() => {
-    if (data) {
-      dispatch({
-        type: 'setSongs',
-        payload: data.pages.flatMap((page) => page.results),
-      });
+    if (state.searchQuery !== '') {
+      queryClient.invalidateQueries(['songs', state.searchQuery]);
     }
-  }, [data, dispatch]);
+  }, [state.searchQuery, queryClient]);
 
   const handleSongPress = async (song: Song): Promise<void> => {
     Keyboard.dismiss();

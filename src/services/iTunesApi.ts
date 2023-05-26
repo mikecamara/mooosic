@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import type Song from '../types/Song';
 import parseSong from '../utils/helpers.ts';
 import type ResponseData from '../types/ResponseData.ts';
+import type ResponseSearchData from '../types/ResponseSearchData.ts';
 
 export async function fetchSongsFromAPI(
   term: string,
@@ -13,9 +14,7 @@ export async function fetchSongsFromAPI(
         term
       )}&entity=song&limit=${limit}`
     );
-    const data: ResponseData = await response.json();
-
-    // map the results to match the Song interface
+    const data: ResponseSearchData = await response.json();
     const songs: Song[] = data.results.map((result) => ({
       trackId: result.trackId.toString(),
       trackName: result.trackName,
