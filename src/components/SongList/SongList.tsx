@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
@@ -37,14 +37,11 @@ function SongList(): JSX.Element {
         getNextPageParam: (lastPage, allPages) => {
           return lastPage.results.length === 25 ? allPages.length + 1 : false;
         },
-        staleTime: 1000 * 60 * 5,
       }
     );
 
   useEffect(() => {
-    if (state.searchQuery !== '') {
-      queryClient.invalidateQueries(['songs', state.searchQuery]);
-    }
+    queryClient.invalidateQueries('songs');
   }, [state.searchQuery, queryClient]);
 
   const handleSongPress = async (song: Song): Promise<void> => {
@@ -118,32 +115,36 @@ function SongList(): JSX.Element {
   );
 
   return (
-    <ImageBackground
-      // eslint-disable-next-line global-require
-      source={require('../../../assets/background-mooosic.png')}
-      style={styles.backgroundImage}
+    <LinearGradient
+      // Background Linear Gradient
+      colors={['#192f6a', '#3b5998']}
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 55,
+        height: '100%',
+      }}
     >
-      <View style={styles.container}>
-        <View style={styles.listContainer}>
-          {isFetching && !data ? (
-            <View style={styles.centered}>
-              <ActivityIndicator size="large" />
-            </View>
-          ) : (
-            <FlatList
-              data={data?.pages.flatMap((page) => page.results)}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => `${item.trackId}-${index}`}
-              keyboardShouldPersistTaps="always"
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-              }}
-              onEndReachedThreshold={0.5}
-            />
-          )}
+      {isFetching && (
+        <View style={[styles.centered, styles.absolute]}>
+          <ActivityIndicator size="large" color="white" />
         </View>
+      )}
+
+      <View style={styles.listContainer}>
+        <FlatList
+          data={data?.pages.flatMap((page) => page.results)}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.trackId}-${index}`}
+          keyboardShouldPersistTaps="always"
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
+          onEndReachedThreshold={0.5}
+        />
       </View>
-    </ImageBackground>
+    </LinearGradient>
   );
 }
 

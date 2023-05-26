@@ -44,6 +44,9 @@ export async function fetchDefaultSongs(page: number): Promise<ResponseData> {
 }
 
 export async function fetchSongs(query: string): Promise<ResponseData> {
+  if (query === '') {
+    return fetchDefaultSongs(1);
+  }
   const url = `https://itunes.apple.com/search?term=${encodeURIComponent(
     query
   )}&media=music&entity=song&attribute=artistTerm&limit=25`;

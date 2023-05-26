@@ -12,6 +12,14 @@ const colors = {
 const SPEAKER_WIDTH = 50;
 
 const styles = StyleSheet.create({
+  absolute: {
+    position: 'absolute',
+    top: 50, // Adjust this as needed
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   backgroundImage: {
     flex: 1,
     justifyContent: 'center',
@@ -24,6 +32,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     borderRadius: 5,

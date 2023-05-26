@@ -1,22 +1,23 @@
-import React, { useState, useContext } from 'react';
-import { ActivityIndicator, TextInput, View } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { TextInput, View } from 'react-native';
 import styles from './SearchBar.styles.ts';
 import { SongContext } from '../../contexts/SongContext.tsx';
-import {
-  fetchSongsFromAPI,
-  fetchDefaultSongs,
-} from '../../services/ITunesApi.ts';
 import debounce from 'lodash.debounce';
 
 function SearchBar(): JSX.Element {
   const [input, setInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const { dispatch } = useContext(SongContext);
 
   const handleSearch = (): void => {
     dispatch({ type: 'setSearchQuery', payload: input.trim() });
   };
 
-  const debouncedHandleSearch = debounce(handleSearch, 500); // 500 ms delay
+  useEffect(() => {
+    dispatch({ type: 'setSearchQuery', payload: searchTerm.trim() });
+  }, [searchTerm]);
+
+  const debouncedHandleSearch = debounce(setSearchTerm, 300);
 
   return (
     <View style={styles.container}>
@@ -25,7 +26,7 @@ function SearchBar(): JSX.Element {
         value={input}
         onChangeText={(text) => {
           setInput(text);
-          debouncedHandleSearch();
+          debouncedHandleSearch(text);
         }}
         onSubmitEditing={() => {
           void handleSearch();
