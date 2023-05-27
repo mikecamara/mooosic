@@ -6,6 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 type RootStackParamList = {
   Settings: undefined;
   PrivacyPolicy: undefined;
+  ContactUs: undefined;
 };
 
 function Settings(): JSX.Element {
@@ -18,6 +19,10 @@ function Settings(): JSX.Element {
       <Button
         title="Go to Privacy Policy"
         onPress={() => navigation.navigate('PrivacyPolicy')}
+      />
+      <Button
+        title="Contact Us"
+        onPress={() => navigation.navigate('ContactUs')}
       />
     </View>
   );

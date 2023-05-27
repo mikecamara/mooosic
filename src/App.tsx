@@ -12,6 +12,7 @@ import styles from './styles/AppStyles.ts';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'; // adjust the path accordingly
 import { createStackNavigator } from '@react-navigation/stack';
+import ContactUs from './components/ContactUs/ContactUs.tsx';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +26,7 @@ function SettingsStack() {
     <Stack.Navigator>
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+      <Stack.Screen name="ContactUs" component={ContactUs} />
     </Stack.Navigator>
   );
 }
