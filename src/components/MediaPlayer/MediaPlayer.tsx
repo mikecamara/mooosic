@@ -1,13 +1,27 @@
 import { BlurView } from 'expo-blur';
 import React, { useContext, useEffect, useRef } from 'react';
-import { Image, Text, TouchableOpacity, View, Animated } from 'react-native';
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  Animated,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { Audio } from 'expo-av';
 import styles from './MediaPlayer.styles.ts';
 import { truncateTitle } from './MediaPlayer.utils.ts';
 import { SongContext } from '../../contexts/SongContext.tsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function MediaPlayer(): JSX.Element | null {
+interface MediaPlayerProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+function MediaPlayer({ style }: MediaPlayerProps): JSX.Element | null {
   const { state, dispatch } = useContext(SongContext);
+  const insets = useSafeAreaInsets();
 
   const translateY = useRef(new Animated.Value(100)).current;
 
@@ -140,7 +154,11 @@ function MediaPlayer(): JSX.Element | null {
 
   return (
     <Animated.View
-      style={[styles.mediaPlayerWrapper, { transform: [{ translateY }] }]}
+      style={[
+        styles.mediaPlayerWrapper,
+        style,
+        { transform: [{ translateY }] },
+      ]}
     >
       <View style={styles.container}>
         <View style={styles.progressBarContainer}>

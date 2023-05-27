@@ -8,12 +8,15 @@ import {
   ImageBackground,
   Keyboard,
   ActivityIndicator,
+  Button,
 } from 'react-native';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   fetchDefaultSongs,
   fetchSongs,
@@ -79,6 +82,28 @@ function SongList(): JSX.Element {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+  const handleLikePress = async (song: Song): Promise<void> => {
+    const isLiked = state.likedSongs.has(song.trackId);
+    let updatedLikedSongs: Map<string, Song> = new Map(state.likedSongs);
+
+    if (isLiked) {
+      updatedLikedSongs.delete(song.trackId);
+      dispatch({ type: 'unlikeSong', payload: song });
+    } else {
+      updatedLikedSongs.set(song.trackId, song);
+      dispatch({ type: 'likeSong', payload: song });
+    }
+
+    try {
+      await AsyncStorage.setItem(
+        '@liked_songs',
+        JSON.stringify(Array.from(updatedLikedSongs.values()))
+      );
+    } catch (error) {
+      console.error('Error saving liked songs:', error);
+    }
+  };
+
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
     <TouchableOpacity
       style={[
@@ -111,6 +136,10 @@ function SongList(): JSX.Element {
             )}
           </View>
         )}
+      <Button
+        title={state.likedSongs.has(item.trackId) ? 'Unlike' : 'Like'}
+        onPress={() => handleLikePress(item)}
+      />
     </TouchableOpacity>
   );
 

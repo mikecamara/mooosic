@@ -6,6 +6,10 @@ import Settings from './components/Settings/Settings.tsx';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import MediaPlayerScreen from './components/MediaPlayerScreen/MediaPlayerScreen.tsx';
+import MediaPlayer from './components/MediaPlayer/MediaPlayer.tsx';
+import { View } from 'react-native';
+import styles from './styles/AppStyles.ts';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,15 +25,18 @@ function App(): JSX.Element {
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen
-            name="Media Player"
-            component={MediaPlayerScreen}
-            options={{ headerShown: false }}
-          />
-          <Tab.Screen name="Liked Songs" component={LikedSongs} />
-          <Tab.Screen name="Settings" component={Settings} />
-        </Tab.Navigator>
+        <View style={{ flex: 1 }}>
+          <Tab.Navigator>
+            <Tab.Screen
+              name="Media Player"
+              component={MediaPlayerScreen}
+              options={{ headerShown: false }}
+            />
+            <Tab.Screen name="Liked Songs" component={LikedSongs} />
+            <Tab.Screen name="Settings" component={Settings} />
+          </Tab.Navigator>
+          <MediaPlayer style={styles.mediaPlayer} />
+        </View>
       </NavigationContainer>
     </QueryClientProvider>
   );
@@ -37,9 +44,11 @@ function App(): JSX.Element {
 
 function WrappedApp(): JSX.Element {
   return (
-    <SongProvider>
-      <App />
-    </SongProvider>
+    <SafeAreaProvider>
+      <SongProvider>
+        <App />
+      </SongProvider>
+    </SafeAreaProvider>
   );
 }
 

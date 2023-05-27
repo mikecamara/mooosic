@@ -16,7 +16,7 @@ function MediaPlayerScreen(): JSX.Element {
       <View style={AppStyles.mainContent}>
         <SearchBar />
         <SongList />
-        <MediaPlayer />
+        {/* <MediaPlayer /> */}
       </View>
     </View>
   );

@@ -1,6 +1,7 @@
 import { type Audio } from 'expo-av';
 import type Song from '../types/Song';
 import type { SongState } from '../interfaces/SongState';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialSongState: SongState = {
   songs: [],
@@ -13,6 +14,7 @@ const initialSongState: SongState = {
   sound: null,
   isMediaPlayerVisible: false,
   progress: 0,
+  likedSongs: new Map(),
 };
 
 export type Action =
@@ -30,7 +32,10 @@ export type Action =
   | { type: 'setSound'; payload: Audio.Sound | null }
   | { type: 'setProgress'; payload: number }
   | { type: 'pause' }
-  | { type: 'play' };
+  | { type: 'play' }
+  | { type: 'likeSong'; payload: Song }
+  | { type: 'unlikeSong'; payload: Song }
+  | { type: 'loadLikedSongs'; payload: Map<string, Song> };
 
 const songReducer = (state: SongState, action: Action): SongState => {
   switch (action.type) {
@@ -75,6 +80,26 @@ const songReducer = (state: SongState, action: Action): SongState => {
       return { ...state, isPlaying: false };
     case 'play':
       return { ...state, isPlaying: true };
+    case 'loadLikedSongs':
+      return {
+        ...state,
+        likedSongs: action.payload,
+      };
+    case 'likeSong':
+      return {
+        ...state,
+        likedSongs: state.likedSongs.set(
+          action.payload.trackId,
+          action.payload
+        ),
+      };
+    case 'unlikeSong':
+      const newSongs = new Map(state.likedSongs);
+      newSongs.delete(action.payload.trackId);
+      return {
+        ...state,
+        likedSongs: newSongs,
+      };
     default:
       throw new Error(`Unhandled action type: ${(action as any).type}`);
   }

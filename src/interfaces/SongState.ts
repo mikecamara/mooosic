@@ -12,4 +12,5 @@ export interface SongState {
   sound: Audio.Sound | null;
   isMediaPlayerVisible: boolean;
   progress: number;
+  likedSongs: Map<string, Song>;
 }

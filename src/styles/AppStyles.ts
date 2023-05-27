@@ -23,6 +23,12 @@ const AppStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  mediaPlayer: {
+    position: 'absolute',
+    bottom: 75,
+    width: '100%',
+    // Other styles as necessary for your design...
+  },
 });
 
 export default AppStyles;
