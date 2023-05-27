@@ -129,7 +129,6 @@ function ContactUs() {
         'You have 45 sweets. If you ate 20 (oops!), how many are left to share with your friends?',
       answer: 25,
     },
-    // Add the rest of your questions following the same format
   ];
 
   useEffect(() => {

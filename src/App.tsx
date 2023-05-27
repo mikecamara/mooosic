@@ -13,19 +13,32 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'; // adjust the path accordingly
 import { createStackNavigator } from '@react-navigation/stack';
 import ContactUs from './components/ContactUs/ContactUs.tsx';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
 // Create a client
 const queryClient = new QueryClient();
 
+export type RootStackParamList = {
+  Settings: undefined;
+  PrivacyPolicy: undefined;
+  ContactUs: undefined;
+  'Media Player': undefined;
+  'Liked Songs': undefined;
+};
+
 const Stack = createStackNavigator(); // Import this from '@react-navigation/stack'
 
 function SettingsStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Settings">
       <Stack.Screen name="Settings" component={Settings} />
-      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicy}
+        options={{ headerTitle: 'Privacy Policy' }}
+      />
       <Stack.Screen name="ContactUs" component={ContactUs} />
     </Stack.Navigator>
   );
@@ -45,13 +58,35 @@ function App(): JSX.Element {
             <Tab.Screen
               name="Media Player"
               component={MediaPlayerScreen}
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons
+                    name="musical-notes-outline"
+                    size={size}
+                    color={color}
+                  />
+                ),
+              }}
             />
-            <Tab.Screen name="Liked Songs" component={LikedSongs} />
+            <Tab.Screen
+              name="Liked Songs"
+              component={LikedSongs}
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="heart-outline" size={size} color={color} />
+                ),
+              }}
+            />
             <Tab.Screen
               name="Settings"
               component={SettingsStack}
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="settings-outline" size={size} color={color} />
+                ),
+              }}
             />
           </Tab.Navigator>
           <MediaPlayer style={styles.mediaPlayer} />
