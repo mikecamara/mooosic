@@ -2,12 +2,7 @@ import React from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-
-type RootStackParamList = {
-  Settings: undefined;
-  PrivacyPolicy: undefined;
-  ContactUs: undefined;
-};
+import { RootStackParamList } from '../../types/RootStackParamList.ts';
 
 function Settings(): JSX.Element {
   const navigation =
@@ -15,9 +10,8 @@ function Settings(): JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>This is the Settings screen.</Text>
       <Button
-        title="Go to Privacy Policy"
+        title="Privacy Policy"
         onPress={() => navigation.navigate('PrivacyPolicy')}
       />
       <Button

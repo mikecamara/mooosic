@@ -1,28 +1,13 @@
 import React, { useContext, useEffect } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-  Keyboard,
-  ActivityIndicator,
-  Button,
-} from 'react-native';
+import { View, FlatList, Keyboard, ActivityIndicator } from 'react-native';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import SongItem from '../SongItem/SongItem.tsx';
 
-import {
-  fetchDefaultSongs,
-  fetchSongs,
-  useDefaultSongs,
-  useSongs,
-} from '../../services/ITunesApi';
+import { fetchDefaultSongs, fetchSongs } from '../../services/ITunesApi';
 import type ResponseData from '../../types/ResponseData.ts';
 
 function SongList(): JSX.Element {
@@ -66,86 +51,10 @@ function SongList(): JSX.Element {
     }
   };
 
-  const getSpeakerIcon = (): string => {
-    if (state.isLoading) {
-      return '⏳';
-    }
-    if (state.isPlaying) {
-      return '🔊';
-    }
-    return '';
-  };
-
-  const millisToMinutesAndSeconds = (millis: number): string => {
-    const minutes = Math.floor(millis / 60000);
-    const seconds = Number(((millis % 60000) / 1000).toFixed(0));
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
-
-  const handleLikePress = async (song: Song): Promise<void> => {
-    const isLiked = state.likedSongs.has(song.trackId);
-    let updatedLikedSongs: Map<string, Song> = new Map(state.likedSongs);
-
-    if (isLiked) {
-      updatedLikedSongs.delete(song.trackId);
-      dispatch({ type: 'unlikeSong', payload: song });
-    } else {
-      updatedLikedSongs.set(song.trackId, song);
-      dispatch({ type: 'likeSong', payload: song });
-    }
-
-    try {
-      await AsyncStorage.setItem(
-        '@liked_songs',
-        JSON.stringify(Array.from(updatedLikedSongs.values()))
-      );
-    } catch (error) {
-      console.error('Error saving liked songs:', error);
-    }
-  };
-
-  const renderItem = ({ item }: { item: Song }): JSX.Element => (
-    <TouchableOpacity
-      style={[
-        styles.listItem,
-        state.currentSong !== null &&
-          state.currentSong.trackId === item.trackId &&
-          styles.selectedItem,
-      ]}
-      onPress={() => {
-        void handleSongPress(item);
-      }}
-      testID={`song-${item.trackId}`}
-    >
-      <Image style={styles.image} source={{ uri: item.artworkUrl100 }} />
-      <View style={styles.listItemText}>
-        <Text style={styles.listItemTitle}>{item.trackName}</Text>
-        <Text style={styles.listItemArtist}>
-          {item.artistName} -{' '}
-          {millisToMinutesAndSeconds(item.trackTimeMillis ?? 0)}
-        </Text>
-        <Text style={styles.listItemAlbum}>{item.collectionName}</Text>
-      </View>
-      {state.currentSong !== null &&
-        state.currentSong.trackId === item.trackId && (
-          <View style={[styles.listItem, styles.speakerContainer]}>
-            {isFetching ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-              <Text style={styles.speakerIcon}>{getSpeakerIcon()}</Text>
-            )}
-          </View>
-        )}
-      <Button
-        title={state.likedSongs.has(item.trackId) ? 'Unlike' : 'Like'}
-        onPress={() => handleLikePress(item)}
-      />
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }: { item: Song }) => <SongItem song={item} />;
 
   return (
     <LinearGradient
-      // Background Linear Gradient
       colors={['#192f6a', '#3b5998']}
       style={{
         position: 'absolute',

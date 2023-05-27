@@ -60,6 +60,9 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 20,
   },
+  heartIcon: {
+    fontSize: 24, // adjust as needed
+  },
 });
 
 export default styles;

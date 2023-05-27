@@ -1,5 +1,5 @@
 // SongItem.tsx
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,12 @@ import {
   Image,
   Button,
   Keyboard,
+  Animated,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { SongContext } from '../../contexts/SongContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from './SongItem.styles.ts'; // Create appropriate styles
+import styles from './SongItem.styles.ts';
 import Song from '../../types/Song';
 
 interface SongItemProps {
@@ -19,6 +21,7 @@ interface SongItemProps {
 
 const SongItem: React.FC<SongItemProps> = ({ song }) => {
   const { state, dispatch } = useContext(SongContext);
+  const [heartScale, setHeartScale] = useState(new Animated.Value(1));
 
   const handleSongPress = async (song: Song): Promise<void> => {
     Keyboard.dismiss();
@@ -40,6 +43,19 @@ const SongItem: React.FC<SongItemProps> = ({ song }) => {
   };
 
   const handleLikePress = async (song: Song): Promise<void> => {
+    Animated.sequence([
+      Animated.timing(heartScale, {
+        toValue: 1.3,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(heartScale, {
+        toValue: 1,
+        friction: 3,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
     const isLiked = state.likedSongs.has(song.trackId);
     let updatedLikedSongs: Map<string, Song> = new Map(state.likedSongs);
 
@@ -105,10 +121,13 @@ const SongItem: React.FC<SongItemProps> = ({ song }) => {
             <Text style={styles.speakerIcon}>{getSpeakerIcon()}</Text>
           </View>
         )}
-      <Button
-        title={state.likedSongs.has(song.trackId) ? 'Unlike' : 'Like'}
-        onPress={() => handleLikePress(song)}
-      />
+      <TouchableOpacity activeOpacity={1} onPress={() => handleLikePress(song)}>
+        <Animated.Text
+          style={[styles.heartIcon, { transform: [{ scale: heartScale }] }]}
+        >
+          {state.likedSongs.has(song.trackId) ? '💛' : '♡'}
+        </Animated.Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };
