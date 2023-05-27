@@ -4,6 +4,7 @@ import type Song from '../../types/Song.ts';
 import { getLikedSongs } from '../../services/songStorage';
 import styles from './LikedSongs.styles.ts';
 import { useFocusEffect } from '@react-navigation/native';
+import SongItem from '../SongItem/SongItem.tsx';
 
 function LikedSongs(): JSX.Element {
   const [likedSongs, setLikedSongs] = useState<Song[]>([]);
@@ -20,19 +21,11 @@ function LikedSongs(): JSX.Element {
   );
 
   const renderItem = ({ item }: { item: Song }): JSX.Element => (
-    <TouchableOpacity style={styles.listItem}>
-      <Image style={styles.image} source={{ uri: item.artworkUrl100 }} />
-      <View style={styles.listItemText}>
-        <Text style={styles.listItemTitle}>{item.trackName}</Text>
-        <Text style={styles.listItemArtist}>{item.artistName}</Text>
-        <Text style={styles.listItemAlbum}>{item.collectionName}</Text>
-      </View>
-    </TouchableOpacity>
+    <SongItem song={item} />
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Liked Songs</Text>
       <FlatList
         data={likedSongs}
         renderItem={renderItem}
