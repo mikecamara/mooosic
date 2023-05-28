@@ -1,0 +1,26 @@
+# Release Notes for v1.0.0
+
+This release introduces several exciting features and improvements to enhance user experience and app performance.
+
+# MyApp Version X.Y.Z Release Notes
+
+## New Features
+- **Search Artist By Name**: Users can now search for their favorite artists by name.
+- **Infinite Scrolling**: Browse more easily with our new infinite scrolling feature.
+- **Like/Unlike Songs**: You can now like and unlike your favorite songs. 
+- **Dark/Light Mode**: Switch between Dark and Light mode according to your preference.
+- **Interactive Privacy Policy**: Our updated Privacy Policy is now more interactive, making it easier to understand.
+- **Contact Us Form**: Reach out to us through our new Contact Us form, powered by a serverless backend infrastructure.
+
+## Enhancements
+- **React Query**: Improved data loading and caching for better performance, using React Query for iTunes API.
+- **Blurred MediaPlayer**: Enhanced MediaPlayer interface with blurred design and added play/pause functionality.
+- **Animation**: Introduced new animations for an even smoother user experience.
+- **Navigation**: Navigation within the app has been optimized for an improved user experience.
+
+## Infrastructure and CI/CD
+- **Pulumi**: The serverless backend infrastructure is now built using Infrastructure as Code (IaC) with Pulumi.
+- **CICD Pipeline with EAS**: Continuous Integration and Continuous Deployment (CICD) pipeline has been set up using Expo Application Services (EAS).
+
+Thank you for supporting Mooosic! We hope you enjoy the new features and improvements. If you have any feedback or suggestions, don't hesitate to contact us.
+

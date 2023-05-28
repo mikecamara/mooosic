@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  View,
   TextInput,
-  StyleSheet,
   Alert,
   Text,
   TouchableOpacity,
@@ -14,7 +12,6 @@ import * as Yup from 'yup';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import mathQuestions from '../../data/mathQuestions.json';
-import axios from 'axios';
 import { RootStackParamList } from '../../types/RootStackParamList.ts';
 import { submitContactForm } from '../../services/contactUsService';
 import lightStyles from './ContactUs.styles.ts';

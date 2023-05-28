@@ -14,6 +14,7 @@ import SECTIONS from '../../data/sectionsPrivacyPolicy.json';
 import styles from './PrivacyPolicy.styles.ts';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import stylesDark from './PrivacyPolicyDark.styles.ts';
+import colors from '../../styles/Colors.ts';
 
 type PrivacyPolicyNavigationProp = NavigationProp<
   RootStackParamList,

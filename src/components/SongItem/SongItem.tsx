@@ -108,6 +108,7 @@ const SongItem: React.FC<SongItemProps> = ({ song }) => {
         void handleSongPress(song);
       }}
       testID={`song-${song.trackId}`}
+      activeOpacity={0.7}
     >
       <Image style={styles.image} source={{ uri: song.artworkUrl100 }} />
       <View style={styles.listItemText}>

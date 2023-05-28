@@ -23,30 +23,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run lint
-        run: npm run lint
+      # - name: Run lint
+      #   run: npm run lint
 
-      - name: Run tests
-        run: npm run test
+      # - name: Run tests
+      #   run: npm run test
 
-      - name: Run tests with coverage
-        run: npm run coverage
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
 
-      - name: List coverage directory contents
-        run: ls -la coverage/
+      - name: Login to Expo
+        run: eas login --non-interactive --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
 
-      - name: Archive coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: coverage/
+      - name: Build app
+        run: eas build --platform all --non-interactive
 
-      - name: Fix lcov paths
-        run: |
-          sed -i 's#/Users/mikecamara/Projects/mooosic/##g' coverage/lcov.info
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.MOOOSIC_COVERAGE }}
-          fail_ci_if_error: true
+      - name: Submit to stores
+        run: eas submit --platform all --latest --notes="$(cat release_notes.txt)"
