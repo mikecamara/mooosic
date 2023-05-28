@@ -29,14 +29,14 @@ jobs:
       # - name: Run tests
       #   run: npm run test
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      # - name: Install EAS CLI
+      #   run: npm install -g eas-cli
 
-      - name: Login to Expo
-        run: eas login --non-interactive --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
+      # - name: Login to Expo
+      #   run: eas login --non-interactive --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
 
-      - name: Build app
-        run: eas build --platform all --non-interactive
+      # - name: Build app
+      #   run: eas build --platform all --non-interactive
 
-      - name: Submit to stores
-        run: eas submit --platform all --latest --notes="$(cat release_notes.txt)"
+      # - name: Submit to stores
+      #   run: eas submit --platform all
