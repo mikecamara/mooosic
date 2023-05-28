@@ -1,14 +1,14 @@
-// PrivacyPolicy.styles.ts
+// PrivacyPolicyDark.styles.ts
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: '#1a1a1a',
   },
   header: {
-    backgroundColor: '#E4E7EB',
+    backgroundColor: '#2c2c2c',
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
@@ -17,17 +17,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#FFFFFF',
   },
   content: {
     padding: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#2c2c2c',
     borderRadius: 10,
     marginBottom: 15,
   },
   contentText: {
     fontSize: 18,
-    color: '#000',
+    color: '#FFFFFF',
   },
   contactButton: {
     marginTop: 20,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   contactButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     textAlign: 'center',
     fontSize: 18,
   },

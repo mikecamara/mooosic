@@ -1,7 +1,12 @@
 import React, { useContext, useEffect } from 'react';
-import { View, FlatList, Keyboard, ActivityIndicator } from 'react-native';
+import {
+  View,
+  FlatList,
+  Keyboard,
+  ActivityIndicator,
+  ImageBackground,
+} from 'react-native';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SongContext } from '../../contexts/SongContext.tsx';
 import type Song from '../../types/Song.ts';
 import styles from './SongList.styles.ts';
@@ -9,10 +14,13 @@ import SongItem from '../SongItem/SongItem.tsx';
 
 import { fetchDefaultSongs, fetchSongs } from '../../services/ITunesApi';
 import type ResponseData from '../../types/ResponseData.ts';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 function SongList(): JSX.Element {
   const { state, dispatch } = useContext(SongContext);
   const queryClient = useQueryClient();
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
 
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery<ResponseData, Error>(
@@ -54,8 +62,12 @@ function SongList(): JSX.Element {
   const renderItem = ({ item }: { item: Song }) => <SongItem song={item} />;
 
   return (
-    <LinearGradient
-      colors={['#192f6a', '#3b5998']}
+    <ImageBackground
+      source={
+        isDark
+          ? require('../../../assets/background-dark.png')
+          : require('../../../assets/background-light.png')
+      }
       style={{
         position: 'absolute',
         left: 0,
@@ -82,7 +94,7 @@ function SongList(): JSX.Element {
           onEndReachedThreshold={0.5}
         />
       </View>
-    </LinearGradient>
+    </ImageBackground>
   );
 }
 

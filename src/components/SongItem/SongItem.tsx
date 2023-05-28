@@ -14,12 +14,15 @@ import { SongContext } from '../../contexts/SongContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './SongItem.styles.ts';
 import Song from '../../types/Song';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 interface SongItemProps {
   song: Song;
 }
 
 const SongItem: React.FC<SongItemProps> = ({ song }) => {
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
   const { state, dispatch } = useContext(SongContext);
   const [heartScale, setHeartScale] = useState(new Animated.Value(1));
 

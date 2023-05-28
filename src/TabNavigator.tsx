@@ -26,6 +26,7 @@ function TabNavigator(): JSX.Element {
         component={MediaPlayerScreen}
         options={{
           headerShown: false,
+          headerTintColor: isDark ? '#fff' : '#000',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="musical-notes-outline" size={size} color={color} />
           ),
@@ -38,10 +39,15 @@ function TabNavigator(): JSX.Element {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart-outline" size={size} color={color} />
           ),
+          headerTintColor: isDark ? '#fff' : '#000',
+          headerStyle: {
+            backgroundColor: isDark ? '#333' : '#F5FCFF',
+          },
+          tabBarActiveTintColor: isDark ? '#fff' : '#000',
         }}
       />
       <Tab.Screen
-        name="Settings"
+        name="SettingsTab"
         component={SettingsStack}
         options={{
           headerShown: false,

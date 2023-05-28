@@ -94,7 +94,7 @@ const contactUsHandler = new aws.lambda.CallbackFunction(
       //   region: process.env.SES_REGION,
       // });
 
-      const body = JSON.parse(event.body!);
+      //   const body = JSON.parse(event.body!);
       //   const params = {
       //     TableName: process.env.TABLE_NAME,
       //     Item: body,
@@ -125,26 +125,28 @@ const contactUsHandler = new aws.lambda.CallbackFunction(
       //     console.error('Error sending email:', error);
       //     throw error;
       //   }
-      const sgMail = require('@sendgrid/mail');
-      sgMail.setApiKey(process.env.SENDGRID_API_AUTH);
+      //   const sgMail = require('@sendgrid/mail');
+      //   sgMail.setApiKey(process.env.SENDGRID_API_AUTH);
 
-      const msg = {
-        to: 'mcmikecamara@gmail.com',
-        from: 'mike.camara.se@gmail.com',
-        subject: 'Hello world',
-        text: 'Hello plain world!',
-        html: '<p>Hello HTML world!</p>',
-      };
+      //   const msg = {
+      //     to: 'mcmikecamara@gmail.com',
+      //     from: 'mike.camara.se@gmail.com',
+      //     subject: 'Hello world',
+      //     text: 'Hello plain world!',
+      //     html: '<p>Hello HTML world!</p>',
+      //   };
 
-      try {
-        await sgMail.send(msg);
-      } catch (error) {
-        throw error;
-      }
+      //   try {
+      //     await sgMail.send(msg);
+      //   } catch (error) {
+      //     throw error;
+      //   }
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ message: body }),
+        body: JSON.stringify({
+          message: 'Form submission processed successfully!',
+        }),
       };
     },
     runtime: aws.lambda.Runtime.NodeJS18dX,

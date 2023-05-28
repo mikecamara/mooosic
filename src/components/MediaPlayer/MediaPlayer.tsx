@@ -14,6 +14,7 @@ import styles from './MediaPlayer.styles.ts';
 import { truncateTitle } from './MediaPlayer.utils.ts';
 import { SongContext } from '../../contexts/SongContext.tsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 interface MediaPlayerProps {
   style?: StyleProp<ViewStyle>;
@@ -22,6 +23,8 @@ interface MediaPlayerProps {
 function MediaPlayer({ style }: MediaPlayerProps): JSX.Element | null {
   const { state, dispatch } = useContext(SongContext);
   const insets = useSafeAreaInsets();
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
 
   const translateY = useRef(new Animated.Value(100)).current;
 
@@ -181,7 +184,7 @@ function MediaPlayer({ style }: MediaPlayerProps): JSX.Element | null {
                   state.currentSong?.trackName ?? 'No song selected'
                 )}
               </Text>
-              <Text style={styles.artist}>
+              <Text style={isDark ? styles.artist : styles.artistDark}>
                 {truncateTitle(
                   state.currentSong?.artistName ?? 'Unknown artist'
                 )}

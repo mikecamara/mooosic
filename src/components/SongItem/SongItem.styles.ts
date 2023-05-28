@@ -1,14 +1,6 @@
 // SongItem.styles.ts
 import { StyleSheet } from 'react-native';
-
-const colors = {
-  darkGray: '#2C2C2C',
-  lightGray: '#4A4A4A',
-  lighterGray: '#5A5A5A',
-  white: '#fff',
-  subtleYellow: '#EFEA9A',
-  transparent: 'transparent',
-};
+import colors from '../../styles/Colors.ts';
 
 const SPEAKER_WIDTH = 50;
 
@@ -61,7 +53,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   heartIcon: {
-    fontSize: 24, // adjust as needed
+    fontSize: 24,
   },
 });
 

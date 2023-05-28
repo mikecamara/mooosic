@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Text,
   View,
@@ -12,6 +12,8 @@ import { RootStackParamList } from '../../types/RootStackParamList.ts';
 import { NavigationProp } from '@react-navigation/native';
 import SECTIONS from '../../data/sectionsPrivacyPolicy.json';
 import styles from './PrivacyPolicy.styles.ts';
+import { ThemeContext } from '../../contexts/ThemeContext';
+import stylesDark from './PrivacyPolicyDark.styles.ts';
 
 type PrivacyPolicyNavigationProp = NavigationProp<
   RootStackParamList,
@@ -23,6 +25,8 @@ interface PrivacyPolicyProps {
 }
 const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
   const [activeSections, setActiveSections] = React.useState<number[]>([]);
+  const { theme } = useContext(ThemeContext);
+  const isDark = theme === 'dark';
 
   const renderHeader = (
     section: { title: string; content: string },
@@ -42,14 +46,22 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
     isActive: boolean
   ) => {
     return (
-      <View style={styles.content}>
-        <Text>{section.content}</Text>
+      <View style={isDark ? stylesDark.content : styles.content}>
+        <Text style={isDark ? stylesDark.contentText : styles.contentText}>
+          {section.content}
+        </Text>
         {section.hasLink && (
           <TouchableOpacity
-            style={styles.contactButton}
+            style={isDark ? stylesDark.contactButton : styles.contactButton}
             onPress={() => navigation.navigate('ContactUs')}
           >
-            <Text style={styles.contactButtonText}>Contact Us</Text>
+            <Text
+              style={
+                isDark ? stylesDark.contactButtonText : styles.contactButtonText
+              }
+            >
+              Contact Us
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -57,7 +69,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={isDark ? stylesDark.container : styles.container}
+      contentContainerStyle={{ paddingBottom: 100 }}
+    >
       <Accordion
         sections={SECTIONS}
         activeSections={activeSections}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   TextInput,
@@ -13,10 +13,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import styles from './ContactUs.styles.ts';
 import mathQuestions from '../../data/mathQuestions.json';
 import axios from 'axios';
 import { RootStackParamList } from '../../types/RootStackParamList.ts';
+import { submitContactForm } from '../../services/contactUsService';
+import lightStyles from './ContactUs.styles.ts';
+import darkStyles from './ContactUsDark.styles.ts';
+import { ThemeContext } from '../../contexts/ThemeContext.tsx';
 
 type ContactUsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -32,6 +35,9 @@ type Props = {
 function ContactUs() {
   const [mathQuestion, setMathQuestion] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState(0);
+  const { theme } = useContext(ThemeContext);
+  const styles = theme === 'dark' ? darkStyles : lightStyles;
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const randomQuestion =
@@ -53,24 +59,17 @@ function ContactUs() {
       message: Yup.string().required('Required'),
       math: Yup.number()
         .required('Required')
-        .test(
-          'is-correct',
-          'Wrong answer',
-          (value) => value === correctAnswer // Assuming the math question is '2+2'
-        ),
+        .test('is-correct', 'Wrong answer', (value) => value === correctAnswer),
     }),
     onSubmit: async (values) => {
       try {
-        // Replace this with the URL of your API Gateway
-        const apiUrl =
-          'https://xir9ziyto0.execute-api.ap-southeast-2.amazonaws.com/contactUsStage-58978dd/contact-us';
-
-        const response = await axios.post(apiUrl, values);
+        const response = await submitContactForm(values);
         console.log(response.data);
         if (
           response.data.message === 'Form submission processed successfully!'
         ) {
-          Alert.alert('Submitted', JSON.stringify(values));
+          Alert.alert('Submitted', `Thank you ${values.name}`);
+          formik.resetForm();
         } else {
           Alert.alert(
             'Error',
@@ -95,6 +94,7 @@ function ContactUs() {
     >
       <TextInput
         placeholder="Your name"
+        placeholderTextColor={isDark ? '#FFFFFF' : '#000000'}
         onChangeText={formik.handleChange('name')}
         onBlur={formik.handleBlur('name')}
         value={formik.values.name}
@@ -109,6 +109,7 @@ function ContactUs() {
       ) : null}
       <TextInput
         placeholder="Your email"
+        placeholderTextColor={isDark ? '#FFFFFF' : '#000000'}
         onChangeText={formik.handleChange('email')}
         onBlur={formik.handleBlur('email')}
         value={formik.values.email}
@@ -123,6 +124,7 @@ function ContactUs() {
       ) : null}
       <TextInput
         placeholder="Your message"
+        placeholderTextColor={isDark ? '#FFFFFF' : '#000000'}
         onChangeText={formik.handleChange('message')}
         onBlur={formik.handleBlur('message')}
         value={formik.values.message}
@@ -138,6 +140,7 @@ function ContactUs() {
       ) : null}
       <Text style={styles.mathQuestionText}>{mathQuestion}</Text>
       <TextInput
+        placeholderTextColor={isDark ? '#FFFFFF' : '#000000'}
         onChangeText={formik.handleChange('math')}
         onBlur={formik.handleBlur('math')}
         value={formik.values.math}

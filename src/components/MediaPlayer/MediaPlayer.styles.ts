@@ -9,6 +9,10 @@ const styles = StyleSheet.create({
     color: WHITE_COLOR,
     fontWeight: 'bold',
   },
+  artistDark: {
+    color: YELLOW_COLOR,
+    fontWeight: 'bold',
+  },
   blurView: {
     bottom: 0,
     left: 0,

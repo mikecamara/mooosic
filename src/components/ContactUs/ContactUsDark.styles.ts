@@ -1,3 +1,4 @@
+// ContactUsDark.styles.ts
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
@@ -5,7 +6,7 @@ export default StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'flex-start',
-    backgroundColor: '#F6F7FB',
+    backgroundColor: '#1a1a1a', // Dark background color
   },
   input: {
     height: 50,
@@ -15,7 +16,8 @@ export default StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     fontSize: 18,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#2c2c2c', // Slightly lighter than background
+    color: '#FFFFFF', // White font color for input text
   },
   button: {
     backgroundColor: '#2196F3',
@@ -30,6 +32,7 @@ export default StyleSheet.create({
   mathQuestionText: {
     fontSize: 18,
     marginBottom: 10,
+    color: '#FFFFFF', // White color for better contrast on dark background
   },
   goBackButton: {
     alignSelf: 'flex-start',
@@ -41,21 +44,21 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   errorText: {
-    color: 'red',
+    color: '#FF0000', // Keep the error color red for attention
     marginBottom: 10,
   },
   inputError: {
     height: 50,
-    borderColor: 'red',
+    borderColor: '#FF0000', // Keep the error color red for attention
     borderWidth: 2,
     marginBottom: 5,
     padding: 10,
     borderRadius: 10,
-    shadowColor: 'red',
+    shadowColor: '#FF0000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 3,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#2c2c2c', // Same as input background
     fontSize: 18,
   },
 });
