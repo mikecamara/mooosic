@@ -21,19 +21,14 @@ function LikedSongs(): JSX.Element {
   const likedSongsArray = Array.from(likedSongs.values()).reverse();
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: isDark ? '#333' : '#F5FCFF' },
-      ]}
-    >
+    <ColorTheme style={[{ backgroundColor: isDark ? '#333' : '#F5FCFF' }]}>
       <FlatList
         data={likedSongsArray}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.trackId}-${index}`}
         contentContainerStyle={{ paddingBottom: 100 }}
       />
-    </View>
+    </ColorTheme>
   );
 }
 

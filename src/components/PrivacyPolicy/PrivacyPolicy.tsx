@@ -1,20 +1,12 @@
 import React, { useContext } from 'react';
-import {
-  Text,
-  View,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
-import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../../types/RootStackParamList.ts';
 import { NavigationProp } from '@react-navigation/native';
 import SECTIONS from '../../data/sectionsPrivacyPolicy.json';
 import styles from './PrivacyPolicy.styles.ts';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import stylesDark from './PrivacyPolicyDark.styles.ts';
-import colors from '../../styles/Colors.ts';
 
 type PrivacyPolicyNavigationProp = NavigationProp<
   RootStackParamList,

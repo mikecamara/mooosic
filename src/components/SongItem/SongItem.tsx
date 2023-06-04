@@ -5,10 +5,8 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Button,
   Keyboard,
   Animated,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { SongContext } from '../../contexts/SongContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';

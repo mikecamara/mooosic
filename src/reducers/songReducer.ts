@@ -1,7 +1,6 @@
 import { type Audio } from 'expo-av';
 import type Song from '../types/Song';
 import type { SongState } from '../interfaces/SongState';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialSongState: SongState = {
   songs: [],

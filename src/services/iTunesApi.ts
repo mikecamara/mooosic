@@ -1,36 +1,5 @@
 import { useQuery } from 'react-query';
-import type Song from '../types/Song';
-import parseSong from '../utils/helpers.ts';
 import type ResponseData from '../types/ResponseData.ts';
-import type ResponseSearchData from '../types/ResponseSearchData.ts';
-
-export async function fetchSongsFromAPI(
-  term: string,
-  limit: number = 10
-): Promise<Song[]> {
-  try {
-    const response = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(
-        term
-      )}&entity=song&limit=${limit}`
-    );
-    const data: ResponseSearchData = await response.json();
-    const songs: Song[] = data.results.map((result) => ({
-      trackId: result.trackId.toString(),
-      trackName: result.trackName,
-      artistName: result.artistName,
-      previewUrl: result.previewUrl,
-      trackTimeMillis: result.trackTimeMillis,
-      collectionName: result.collectionName,
-      artworkUrl100: result.artworkUrl100,
-    }));
-
-    return songs;
-  } catch (error) {
-    console.error('Error fetching songs from API:', error);
-    return [];
-  }
-}
 
 export async function fetchDefaultSongs(page: number): Promise<ResponseData> {
   const defaultQuery = 'red+hot';
